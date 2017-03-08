@@ -1,0 +1,22 @@
+{
+  "name": "fmp2copernic",
+  "version": "1.0.0",
+  "description": "Passerelle web entre la base de données FileMaker pro de la STI et le service de facturation Copernic.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epfl-sdf/fmp2copernic.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/epfl-sdf/fmp2copernic/issues"
+  },
+  "homepage": "https://github.com/epfl-sdf/fmp2copernic#readme",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
