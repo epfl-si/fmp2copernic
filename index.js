@@ -21,9 +21,11 @@ app.use(serveStatic('public_data',  {'index': ['index.html', 'index.htm']}))
 var xml = fs.readFileSync('public_data/users.xml', 'utf8');
 var options = {ignoreText: true, alwaysChildren: true};
 var users = convert.xml2js(xml, options);
-/*app.get('/', function (req, res) {
-  res.send('Bloub World!')
-})*/
+
+app.get('/users', function (req, res) {
+  res.send(req.query)
+  res.send(users)
+})
 
 
 app.listen(3000)
