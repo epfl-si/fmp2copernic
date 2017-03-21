@@ -23,7 +23,7 @@ var options = {ignoreText: true, alwaysChildren: true};
 var users = convert.xml2js(xml, options);
 
 app.get('/users', function (req, res) {
-  res.send(req.query)
+//  res.send(req.query)
   res.send(users)
 })
 
