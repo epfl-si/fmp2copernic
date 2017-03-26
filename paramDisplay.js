@@ -22,6 +22,7 @@ var instructionsNewUser = function(req,res){
             '    <body>'+
             '     	<p> Client: ' + params['name'] + ' sciper: ' + params['sciper'] + '</p>'+
             '       <button onclick="window.open'+'( \'https://checkout.lemonde.fr/glm_onestepcheckout/onestep/downloadPdf/\', \'_blank\', \'fullscreen=yes\'); return false;">'+'Afficher facture</button>'+
+    // lien du pdf (que j'ai utilisé en guise de test) a remplacer par params['PathFacturePDF']
             '    </body>'+
             '</html>');
         res.end();
