@@ -142,7 +142,7 @@ app.get('/copernic', function (req, res) {
   }
   request.post(
     'https://sapservices.epfl.ch/piq/RESTAdapter/api/sd/facture',
-    {},
+    post_content,
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
             console.log(body)
