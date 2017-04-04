@@ -3,6 +3,7 @@ var serveStatic = require('serve-static')
 var morgan = require('morgan')
 var convert = require('xml-js')
 var fs = require('fs')
+var fetch = require("whatwg-fetch")
 
 var app = express()
 
