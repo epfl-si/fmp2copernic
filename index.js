@@ -6,6 +6,8 @@ var fs = require('fs')
 var fetch = require("whatwg-fetch")
 var request = require('request')
 
+var secrets = require('./credentials')
+
 var app = express()
 
 // for error handling
@@ -140,9 +142,14 @@ app.get('/copernic', function (req, res) {
     ],
     "execmode": req.query["execmode"]
   }
-  request.post(
-    'https://sapservices.epfl.ch/piq/RESTAdapter/api/sd/facture',
-    post_content,
+  auth = "Basic " + new Buffer(secrets.username + ":" + secrets.password).toString("base64");
+  request.post({
+      url:'https://sapservices.epfl.ch/piq/RESTAdapter/api/sd/facture',
+      postData:post_content,
+      headers:{
+        "Authorization" : auth
+      }
+    },
     function (error, response, body) {
       if(error) {
         console.log("sent and received error :(")
