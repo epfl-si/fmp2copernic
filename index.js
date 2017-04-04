@@ -4,6 +4,7 @@ var morgan = require('morgan')
 var convert = require('xml-js')
 var fs = require('fs')
 var fetch = require("whatwg-fetch")
+var request = require('request')
 
 var app = express()
 
@@ -31,13 +32,11 @@ function change_path(path, old_dir, new_dir) {
   return new_dir.concat(path.slice(old_dir.length));
 }
 
-function convertToBase64(input) {
-  var b64
-  fetch(input)
-  .then(res => res.blob())
-  .then(blob => blob.dataUrl())
-  .then(base64 => b64 = base64)
-  return b64
+function getBase64(file) {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return new Buffer(bitmap).toString('base64');
 }
 
 app.get('/copernic', function (req, res) {
@@ -78,12 +77,12 @@ app.get('/copernic', function (req, res) {
         "filename": newfacture_adress.slice(newfacture_adress.lastIndexOf('/')),
         "filetype": "application/pdf",
         "filesecription": "test attach",
-        "filecontent": convertToBase64(newfacture_adress)
+        "filecontent": getBase64(newfacture_adress)
       },{
         "filename": newdevis_adress.slice(newdevis_adress.lastIndexOf('/')),
         "filetype": "application/pdf",
         "filesecription": "test attach",
-        "filecontent": convertToBase64(newdevis_adress),
+        "filecontent": getBase64(newdevis_adress),
         "fileprivate": true
       }
     ],
@@ -145,9 +144,19 @@ app.get('/copernic', function (req, res) {
     'https://sapservices.epfl.ch/piq/RESTAdapter/api/sd/facture',
     post_content,
     function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body)
-        }
+      if(error) {
+        console.log("sent and received error :(")
+        res.send(error)
+      }
+      else if (!error && response.statusCode == 200) {
+        console.log("sent and received answer !")
+        res.send(body)
+      }
+      else
+      {
+        console.log("received somthing else")
+        res.send(response)
+      }
     }
 );
 })
