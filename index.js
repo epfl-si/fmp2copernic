@@ -74,12 +74,12 @@ app.get('/copernic', function (req, res) {
     },*/
     "attachment": [
       {
-        "filename": newfacture_adress.slice(newfacture_adress.lastIndexOf('/')),
+        "filename": newfacture_adress.slice(newfacture_adress.lastIndexOf('/')+1),
         "filetype": "application/pdf",
         "filesecription": "test attach",
         "filecontent": getBase64(newfacture_adress)
       },{
-        "filename": newdevis_adress.slice(newdevis_adress.lastIndexOf('/')),
+        "filename": newdevis_adress.slice(newdevis_adress.lastIndexOf('/')+1),
         "filetype": "application/pdf",
         "filesecription": "test attach",
         "filecontent": getBase64(newdevis_adress),
