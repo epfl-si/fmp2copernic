@@ -1,3 +1,9 @@
+//fmp2copernic
+//Petit test pour la passerelle File Maker pro to Copernic
+//zf170418.1640
+//MIT License
+//Copyright (c) 2017 www.epfl.ch
+
 var express = require('express')
 var serveStatic = require('serve-static')
 var morgan = require('morgan')
@@ -14,20 +20,28 @@ var app = express()
 app.use(morgan('combined'))
 
 // greeting page, might want to print a help message to use all command possible with the server.
-app.get('/', function (req, res) {
-  res.send('Bloub World! 1525')
+app.get('/', function(req, res) {
+  text = "<p>Hello World! <br> ça marche en remote 170418.1634.</p>"
+  //text += "<p>Les credentials sont:<br>Username: " + secrets.username + "<br>Password: " + secrets.password + "</p>"
+  console.log("<p>Les credentials sont:<br>Username: " + secrets.username + "<br>Password: " + secrets.password + "</p>")
+  res.send(text)
 })
 
 // to serve static files from public_data folder
-app.use(serveStatic('public_data',  {'index': ['index.html', 'index.htm']}))
+app.use(serveStatic('public_data', {
+  'index': ['index.html', 'index.htm']
+}))
 
 // parse xml file to be able to use it
 var xml = fs.readFileSync('public_data/users.xml', 'utf8');
-var options = {ignoreText: true, alwaysChildren: true};
+var options = {
+  ignoreText: true,
+  alwaysChildren: true
+};
 var users = convert.xml2js(xml, options);
 
-app.get('/users', function (req, res) {
-  res.send(users)
+app.get('/users', function(req, res) { 
+  res.send(users)
 })
 
 function change_path(path, old_dir, new_dir) {
@@ -35,13 +49,13 @@ function change_path(path, old_dir, new_dir) {
 }
 
 function getBase64(file) {
-    // read binary data
-    var bitmap = fs.readFileSync(file);
-    // convert binary data to base64 encoded string
-    return new Buffer(bitmap).toString('base64');
+  // read binary data
+  var bitmap = fs.readFileSync(file);
+  // convert binary data to base64 encoded string
+  return new Buffer(bitmap).toString('base64');
 }
 
-app.get('/copernic', function (req, res) {
+app.get('/copernic', function(req, res) {
   newfacture_adress = change_path(req.query['PathFacturePDF'], 'Z:/PDF devis_factures/ATPR/Cheseaux Claude/18.03.2017-OF-216', './build/pdf')
   newdevis_adress = change_path(req.query['PathDevisPDF'], 'Z:/PDF devis_factures/ATPR/Cheseaux Claude/18.03.2017-OF-216', './build/pdf')
   post_content = {
@@ -74,21 +88,22 @@ app.get('/copernic', function (req, res) {
       "fund": "",
       "fundrate": ""
     },*/
-/*    "attachment": [
-      {
-        "filename": newfacture_adress.slice(newfacture_adress.lastIndexOf('/')+1),
-        "filetype": "application/pdf",
-        "filesecription": "test attach",
-        "filecontent": getBase64(newfacture_adress)
-      },{
-        "filename": newdevis_adress.slice(newdevis_adress.lastIndexOf('/')+1),
-        "filetype": "application/pdf",
-        "filesecription": "test attach",
-        "filecontent": getBase64(newdevis_adress),
-        "fileprivate": true
-      }
-    ],
-*/    /*"partners": [
+    /*    "attachment": [
+          {
+            "filename": newfacture_adress.slice(newfacture_adress.lastIndexOf('/')+1),
+            "filetype": "application/pdf",
+            "filesecription": "test attach",
+            "filecontent": getBase64(newfacture_adress)
+          },{
+            "filename": newdevis_adress.slice(newdevis_adress.lastIndexOf('/')+1),
+            "filetype": "application/pdf",
+            "filesecription": "test attach",
+            "filecontent": getBase64(newdevis_adress),
+            "fileprivate": true
+          }
+        ],
+    */
+    /*"partners": [
       {
         "role": "AG",
         "fictr": req.query["fictr"],
@@ -97,8 +112,7 @@ app.get('/copernic', function (req, res) {
         "email": "test@xyz.com"
       }
     ],*/
-    "items": [
-      {
+    "items": [{
         "number": req.query["number"],
         "qty": req.query["qty"],
         "price": req.query["price"],
@@ -145,30 +159,27 @@ app.get('/copernic', function (req, res) {
   console.log(post_content)
   auth = "Basic " + new Buffer(secrets.username + ":" + secrets.password).toString("base64");
   request.post({
-      url:'https://sapservices.epfl.ch/piq/RESTAdapter/api/sd/facture',
-      postData:post_content,
-      headers:{
-        "Authorization" : auth
+      url: 'https://sapservices.epfl.ch/piq/RESTAdapter/api/sd/facture',
+      postData: post_content,
+      headers: {
+        "Authorization": auth
       }
     },
-    function (error, response, body) {
-      if(error) {
+    function(error, response, body) {
+      if (error) {
         console.log("sent and received error :(")
         res.send(error)
-      }
-      else if (!error && response.statusCode == 200) {
+      } else if (!error && response.statusCode == 200) {
         console.log("sent and received answer !")
         res.send(body)
-      }
-      else
-      {
+      } else {
         console.log("received somthing else")
         res.send(response)
       }
     }
-);
+  );
 })
 
 app.listen(3000, function() {
-    console.log('App fmp2copernic listening on port 3000!')
+  console.log('App fmp2copernic listening on port 3000!')
 })
