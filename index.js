@@ -15,7 +15,7 @@ app.use(morgan('combined'))
 
 // greeting page, might want to print a help message to use all command possible with the server.
 app.get('/', function (req, res) {
-  res.send('Bloub World! 1511')
+  res.send('Bloub World! 1525')
 })
 
 // to serve static files from public_data folder
