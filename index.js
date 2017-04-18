@@ -6,7 +6,7 @@ var fs = require('fs')
 var fetch = require("whatwg-fetch")
 var request = require('request')
 
-var secrets = require('./credentials')
+var secrets = require('../fmp2copernic.credentials.js')
 
 var app = express()
 
@@ -15,7 +15,7 @@ app.use(morgan('combined'))
 
 // greeting page, might want to print a help message to use all command possible with the server.
 app.get('/', function (req, res) {
-  res.send('Bloub World!')
+  res.send('Bloub World! 1511')
 })
 
 // to serve static files from public_data folder
@@ -172,4 +172,3 @@ app.get('/copernic', function (req, res) {
 app.listen(3000, function() {
     console.log('App fmp2copernic listening on port 3000!')
 })
-
