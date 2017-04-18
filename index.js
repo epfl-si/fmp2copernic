@@ -169,5 +169,7 @@ app.get('/copernic', function (req, res) {
 );
 })
 
-app.listen(3000)
+app.listen(3000, function() {
+    console.log('App fmp2copernic listening on port 3000!')
+})
 
