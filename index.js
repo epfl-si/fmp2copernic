@@ -74,7 +74,7 @@ app.get('/copernic', function (req, res) {
       "fund": "",
       "fundrate": ""
     },*/
-    "attachment": [
+/*    "attachment": [
       {
         "filename": newfacture_adress.slice(newfacture_adress.lastIndexOf('/')+1),
         "filetype": "application/pdf",
@@ -88,7 +88,7 @@ app.get('/copernic', function (req, res) {
         "fileprivate": true
       }
     ],
-    /*"partners": [
+*/    /*"partners": [
       {
         "role": "AG",
         "fictr": req.query["fictr"],
@@ -142,6 +142,7 @@ app.get('/copernic', function (req, res) {
     ],
     "execmode": req.query["execmode"]
   }
+  console.log(post_content)
   auth = "Basic " + new Buffer(secrets.username + ":" + secrets.password).toString("base64");
   request.post({
       url:'https://sapservices.epfl.ch/piq/RESTAdapter/api/sd/facture',
