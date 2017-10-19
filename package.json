@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/epfl-sdf/fmp2copernic#readme",
   "dependencies": {
+    "chai": "^4.1.2",
     "express": "^4.15.2",
-    "morgan": "^1.9.0"
+    "mocha": "^4.0.1",
+    "request": "^2.83.0"
   }
 }
