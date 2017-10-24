@@ -36,6 +36,6 @@ describe("/copernic/newfact gateway", function() {
   })
 
     after(function() {
-      return underTest.shutdown().then(function() {return fakeCopernic.shutdown()})
+      return underTest.shutdown().then(() => fakeCopernic.shutdown())
     })
 })
