@@ -8,7 +8,7 @@ let MockCopernic = require("../mock/copernic.js"),
   fmp2CopernicGateway
 
 mockCopernic.run().then(function() {
-  console.log("Mock Copernic running on " + mockCopernicHostPort)
+  console.log("Mock Copernic running on " + mockCopernic.getHostPort())
   fmp2CopernicGateway = new Fmp2CopernicGateway({
       port: 3000,
       copernicHostPort: mockCopernic.getHostPort()
