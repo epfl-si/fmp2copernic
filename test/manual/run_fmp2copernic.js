@@ -1,14 +1,17 @@
+/**
+ * Run a mock Copernic, and a real Fmp2CopernicGateway in front of it
+ */
+
 let MockCopernic = require("../mock/copernic.js"),
   mockCopernic = new MockCopernic(),
   Fmp2CopernicGateway = require("../../fmp2copernic.js"),
   fmp2CopernicGateway
 
-mockCopernic.run().then(function(express) {
-  let mockCopernicHostPort = "localhost:" + mockCopernic.listener.address().port
+mockCopernic.run().then(function() {
   console.log("Mock Copernic running on " + mockCopernicHostPort)
   fmp2CopernicGateway = new Fmp2CopernicGateway({
-      port: 3000, // Let the OS pick a port
-      copernicHostPort: mockCopernicHostPort
+      port: 3000,
+      copernicHostPort: mockCopernic.getHostPort()
   })
   return fmp2CopernicGateway.run()
 }).then(function() {

@@ -7,13 +7,12 @@ describe("/copernic/newfact gateway", function() {
   before(function() {
     fakeCopernic = new Copernic()
     return fakeCopernic.run().then(function() {
-      let fakeCopernicHostPort = "localhost:" + fakeCopernic.listener.address().port
       underTest = new Fmp2CopernicGateway({
         port: 0, // Let the OS pick a port
-        copernicHostPort: fakeCopernicHostPort
+        copernicHostPort: fakeCopernic.getHostPort
       })
       return underTest.run()
-    }).then(function(express) {
+    }).then(function() {
       underTest.baseUrl = "http://localhost:" + underTest.listener.address().port
     })
   })

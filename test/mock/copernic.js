@@ -26,7 +26,11 @@ module.exports = MockCopernic
 
 MockCopernic.prototype.reset = function() {
   // Reset methods to their prototype, in case a test overrode them
-  delete this.handleNewFact
+  this.handleNewFact = MockCopernic.prototype.handleNewFact
 }
 
 MockCopernic.prototype.handleNewFact = function() {}
+
+MockCopernic.prototype.getHostPort = function() {
+  return "localhost:" + this.listener.address().port
+}
