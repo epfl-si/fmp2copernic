@@ -1,15 +1,13 @@
+const promisify = require("../../lib/promises").promisify,
+  ourExpress = require("../../lib/our-express.js")
+
 /**
  * @constructor
  */
-const promisify = require("../../lib/promises").promisify;
-
-function MockCopernic() {}
-module.exports = MockCopernic
-
-MockCopernic.prototype._setupExpress = function(app) {
-  let self = this
-  app.post("/piq/RESTAdapter/api/sd/facture", function(req, res) {
-    var payload = {}; // TODO: decode from POSTed JSON
+function MockCopernic() {
+  let self = ourExpress.new(MockCopernic)
+  self.post("/piq/RESTAdapter/api/sd/facture", function(req, res) {
+    let payload = {}; // TODO: decode from POSTed JSON
     promisify(self.handleNewfact(req, payload)).then(function() {
       // TODO: observe actual success behavior from the real thing
       res.send('OK')
@@ -18,12 +16,13 @@ MockCopernic.prototype._setupExpress = function(app) {
       res.send('NOT OK')
     })
   })
-  app.get('/', function(req, res) {
+  self.get('/', function(req, res) {
     res.send('hello world');
-  });
+  })
+  return self
 }
 
-MockCopernic.prototype.run = require("../../lib/express-server-mixin.js").run
+module.exports = MockCopernic
 
 MockCopernic.prototype.reset = function() {
   // Reset methods to their prototype, in case a test overrode them

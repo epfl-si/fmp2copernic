@@ -1,19 +1,20 @@
-let Copernic = require("./mock/copernic.js"),
+let assert=require("assert"),
+    Copernic = require("./mock/copernic.js"),
   Fmp2CopernicGateway = require("../fmp2copernic.js")
 
 describe("/copernic/newfact gateway", function() {
   let underTest, fakeCopernic;
   before(function() {
     fakeCopernic = new Copernic()
-    return fakeCopernic.run().then(function(express) {
-      let fakeCopernicHostPort = "localhost:" + express.address().port
+    return fakeCopernic.run().then(function() {
+      let fakeCopernicHostPort = "localhost:" + fakeCopernic.listener.address().port
       underTest = new Fmp2CopernicGateway({
         port: 0, // Let the OS pick a port
         copernicHostPort: fakeCopernicHostPort
       })
       return underTest.run()
     }).then(function(express) {
-      underTest.baseUrl = "http://localhost:" + express.address().port
+      underTest.baseUrl = "http://localhost:" + underTest.listener.address().port
     })
   })
 
@@ -31,7 +32,11 @@ describe("/copernic/newfact gateway", function() {
         "&PathFacturePDF=P:%2FATPR%2FTravaux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FFAC_OF-4-2017.pdf" +
         "&PathDevisPDF=P:%2FATPR%2FTravaux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FDevis_OF-4-2017.pdf")
       .then(function(response) {
-        assert(false)
+        assert(true)
       })
   })
+
+    after(function() {
+      return underTest.shutdown().then(function() {return fakeCopernic.shutdown()})
+    })
 })

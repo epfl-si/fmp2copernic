@@ -3,33 +3,26 @@
  */
 
 const express = require('express'),
-  _ = require("lodash")
+  _ = require("lodash"),
+  ourExpress = require("./lib/our-express.js")
 
 /**
  * @constructor
  * @param opts.port TCP port to serve on (0 to let the OS allocate it)
  * @param opts.copernicHostPort Copernic back-end address in host:port format
  */
-module.exports = Fmp2CopernicGateway = function Fmp2CopernicGateway(opts) {
-  this.opts = _.extend({
+function Fmp2CopernicGateway(opts) {
+  let self = ourExpress.new(Fmp2CopernicGateway)
+  self.opts = _.extend({
     port: 3000
   }, opts)
-}
+  let backendBaseUrl = self.opts.copernicHostPort
 
-/**
- * Called by run()
- */
-Fmp2CopernicGateway.prototype._setupExpress = function(express) {
-  let backendBaseUrl = this.opts.copernicHostPort
-
-  express.get('/copernic/newfact', function(req, res) {
+  self.get('/copernic/newfact', function(req, res) {
     res.send('Hello World!')
   })
+  return self
 }
 
-/**
- * Run the proxy server
- *
- * @returns {Promise}
- */
-Fmp2CopernicGateway.prototype.run = require("./lib/express-server-mixin.js").run
+module.exports = Fmp2CopernicGateway
+
