@@ -10,11 +10,11 @@ let MockCopernic = require("../mock/copernic.js"),
 mockCopernic.run().then(function() {
   console.log("Mock Copernic running on " + mockCopernic.getHostPort())
   fmp2CopernicGateway = new Fmp2CopernicGateway({
-      port: 3000,
-      copernicHostPort: mockCopernic.getHostPort()
+    port: 3000,
+    copernicHostPort: mockCopernic.getHostPort()
   })
   return fmp2CopernicGateway.run()
 }).then(function() {
   console.log("Fmp2Copernic running on port " +
-              fmp2CopernicGateway.listener.address().port)
+    fmp2CopernicGateway.listener.address().port)
 })

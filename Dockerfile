@@ -5,7 +5,7 @@
 #
 #   docker build -t epflsti/fmp2copernic-server .
 #   docker service rm fmp2copernic_server
-#   docker deploy fmp2copernic --compose-file docker-compose.yml 
+#   docker deploy fmp2copernic --compose-file docker-compose.yml
 FROM node
 WORKDIR /usr/src/app
 

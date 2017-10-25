@@ -1,5 +1,5 @@
-let assert=require("assert"),
-    Copernic = require("./mock/copernic.js"),
+let assert = require("assert"),
+  Copernic = require("./mock/copernic.js"),
   Fmp2CopernicGateway = require("../fmp2copernic.js")
 
 describe("/copernic/newfact gateway", function() {
@@ -35,7 +35,7 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
-    after(function() {
-      return underTest.shutdown().then(() => fakeCopernic.shutdown())
-    })
+  after(function() {
+    return underTest.shutdown().then(() => fakeCopernic.shutdown())
+  })
 })

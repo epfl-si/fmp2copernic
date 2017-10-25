@@ -17,7 +17,7 @@ function MockCopernic() {
     })
   })
   self.get('/', function(req, res) {
-    res.send('hello world');
+    res.send("HELLO WORLD");
   })
   return self
 }

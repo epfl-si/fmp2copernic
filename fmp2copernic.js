@@ -25,4 +25,3 @@ function Fmp2CopernicGateway(opts) {
 }
 
 module.exports = Fmp2CopernicGateway
-

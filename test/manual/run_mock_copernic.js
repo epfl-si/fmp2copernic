@@ -3,7 +3,7 @@ let MockCopernic = require("../mock/copernic.js"),
 
 
 mockCopernic.opts = {
-    port: 3010
+  port: 3010
 }
 
 mockCopernic.run().then(function() {
