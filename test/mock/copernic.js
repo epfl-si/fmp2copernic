@@ -6,14 +6,13 @@ const promisify = require("../../lib/promises").promisify,
  */
 function MockCopernic() {
   let self = ourExpress.new(MockCopernic)
-  self.post("/piq/RESTAdapter/api/sd/facture", function(req, res) {
+  self.post("/piq/RESTAdapter/api/sd/facture", function(req, res, next) {
     let payload = {}; // TODO: decode from POSTed JSON
-    promisify(self.handleNewfact(req, payload)).then(function() {
+    promisify(() => self.handleNewfact(req, payload)).then(function() {
       // TODO: observe actual success behavior from the real thing
       res.send('OK')
-    }).catch(function() {
-      // TODO: observe actual error behavior from the real thing
-      res.send('NOT OK')
+    }).catch(function(e) {
+      next(e)
     })
   })
   self.get('/', function(req, res) {
@@ -26,10 +25,12 @@ module.exports = MockCopernic
 
 MockCopernic.prototype.reset = function() {
   // Reset methods to their prototype, in case a test overrode them
-  this.handleNewFact = MockCopernic.prototype.handleNewFact
+  this.handleNewfact = MockCopernic.prototype.handleNewfact
 }
 
-MockCopernic.prototype.handleNewFact = function() {}
+MockCopernic.prototype.handleNewfact = function() {
+  throw new Error()
+}
 
 MockCopernic.prototype.getHostPort = function() {
   return "localhost:" + this.listener.address().port
