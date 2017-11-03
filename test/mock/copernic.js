@@ -10,7 +10,7 @@ function MockCopernic() {
   self.post("/piq/RESTAdapter/api/sd/facture", function(req, res, next) {
     let payload = {}; // TODO: decode from POSTed JSON
     promisify(() => self.handleNewfact(req, payload)).then(function(docId) {
-
+      res.set('Content-Type', 'application/json');
       res.send(JSON.stringify({
         "E_RESULT": {
           "item": {

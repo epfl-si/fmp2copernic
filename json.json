@@ -1,0 +1,93 @@
+{
+	"header": {
+		"ordertype": "ZINT",
+		"ordernr": "TestCMD1",
+		"currency": "CHF",
+		"clientnr": "219253",
+		"description": "Texte d'En-Tête",
+		"changevalidation": false
+	},
+	"shipper": {
+		"name": "Michel Peiris",
+		"sciper": "103007",
+		"fund": "0052-2",
+		"email": "michel.peiris@epfl.ch",
+		"tel": "0216934760"
+	},
+	"shipper_imputation": {
+		"opcode": "",
+		"ordernr": "",
+		"otp": "",
+		"affaire": "",
+		"travelreqnr": "",
+		"travelreqmatnr": ""
+	},
+	"payer_imputation": {
+		"fund": "",
+		"fundrate": ""
+	},
+	"attachment": [
+		{
+		"filename": "test1.pdf",
+		"filetype": "application/pdf",
+		"filesecription": "test attach",
+		"filecontent": "BASE64ENCODED"
+	     	},{
+		"filename": "test2.pdf",
+		"filetype": "application/pdf",
+		"filesecription": "test attach",
+		"filecontent": "BASE64ENCODED",
+		"fileprivate": true
+		}
+	],
+	"partners": [
+		{
+		"role": "AG",
+		"fictr": "0052",
+		"name2": "Station 7, 4ème Etage",
+		"name3": "Mme M-T. Porchet",
+		"email": "test@xyz.com"
+		}
+	],
+	"items": [
+		{
+		"number": "9010135",
+		"qty": 1,
+		"price": "50",
+		"text": "Texte du poste 1",
+		"discounttype": "ZD01",
+		"discountamount": "50",
+		"shipper_imputation": {
+			"opcode": "aaa",
+			"ordernr": "",
+			"otp": "",
+			"travelreqnr": "",
+			"travelreqmatnr": ""
+		},
+		"payer_imputation": [{
+			"fund": "1320-1",
+			"fundrate": "50",
+			"opcode": "aaa",
+			"ordernr": "",
+			"otp": "",
+			"travelreqnr": "",
+			"travelreqmatnr": ""
+			}, {
+			"fund": "1320-2",
+			"fundrate": "50",
+			"opcode": "bbb",
+			"ordernr": "",
+			"otp": "",
+			"travelreqnr": "",
+			"travelreqmatnr": ""
+			}]
+		}, 
+		{
+		"number": "9010136",
+		"qty": 1,
+		"price": "200",
+		"text": "Texte du poste 2",
+		"internalconsoname": "Dr. Tartenpion"
+	}],
+	"execmode": "SIMU"
+}
