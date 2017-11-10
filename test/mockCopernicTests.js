@@ -1,5 +1,11 @@
 let assert = require("assert"),
-  Copernic = require("./mock/copernic.js")
+  Copernic = require("./mock/copernic.js"),
+  request = require('request');
+
+request('http://localhost:3010/piq/RESTAdapter/api/sd/facture', function(error, response) {
+  console.log('error:', error); // Print the error if one occurred
+  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+});
 
 describe.only("tests for MockCopernic", function() {
   before(function() {
@@ -22,7 +28,6 @@ describe.only("tests for MockCopernic", function() {
 
   })
 })
-
 
 
 // .only for only one describe or it
