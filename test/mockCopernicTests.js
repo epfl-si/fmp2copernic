@@ -8,6 +8,7 @@ request('http://localhost:3010/piq/RESTAdapter/api/sd/facture', function(error, 
 });
 
 describe.only("tests for MockCopernic", function() {
+  let fakeCopernic
   before(function() {
     fakeCopernic = new Copernic()
     return fakeCopernic.run().then(function() {
