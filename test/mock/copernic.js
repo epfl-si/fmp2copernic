@@ -38,7 +38,13 @@ function MockCopernic() {
         }
       }))
     }).catch(function(e) {
-      next(e)
+      // This is basically the same as
+      // next(e);
+      // except without the noise to standard output; plus tests get a chance
+      // to look at the exception.
+      self.caughtException = e;
+      res.status(500);
+      res.send(e + "");
     })
   })
   self.get('/', function(req, res) {
@@ -53,6 +59,7 @@ module.exports = MockCopernic
 MockCopernic.prototype.reset = function() {
   // Reset methods to their prototype, in case a test overrode them
   this.handleNewfact = MockCopernic.prototype.handleNewfact
+  delete this.caughtException
 }
 
 MockCopernic.prototype.handleNewfact = function() {
