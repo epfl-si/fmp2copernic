@@ -44,6 +44,7 @@ function MockCopernic() {
   self.get('/', function(req, res) {
     res.send("HELLO WORLD");
   })
+
   return self
 }
 
