@@ -1,6 +1,7 @@
 /**
  * Main server class
  */
+request = require('request');
 
 const express = require('express'),
   _ = require("lodash"),
@@ -17,9 +18,11 @@ function Fmp2CopernicGateway(opts) {
     port: 3000
   }, opts)
   let backendBaseUrl = self.opts.copernicHostPort
-
   self.get('/copernic/newfact', function(req, res) {
-    res.send('Hello World!')
+    request.post('http://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture', function(error, response) {
+      console.log(response.body);
+      res.send("OK " + JSON.parse(response.body).E_RESULT.item.DOC_NUMBER);
+    })
   })
   return self
 }
