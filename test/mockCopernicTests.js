@@ -3,7 +3,7 @@ let assert = require("assert"),
   request = require('request');
 
 
-describe.only("tests for MockCopernic", function() {
+describe("tests for MockCopernic", function() {
   let fakeCopernic, fakeCopernicHostPort
   before(function() {
     fakeCopernic = new Copernic()
