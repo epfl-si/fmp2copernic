@@ -38,9 +38,13 @@ describe("/copernic/newfact gateway", function() {
         assert.equal(responseBody, "OK 12345") // XXX It is actually not clear that FileMaker would be happy with this. Need to confirm with Claude
       })
   })
-  it("transmits the sciper", function() {
+  it.only("transmits the sciper", function() {
     var sciperInMock = null;
-    // TODO: have the mock record the SCIPER in sciperInMock.
+    fakeCopernic.handleNewfact = function(req) {
+      sciperInMock = req.body.shipper.sciper;
+      return "12345"
+    }
+
     return rp({
         uri: uriTest(),
       })

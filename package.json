@@ -27,5 +27,8 @@
     "q": "^1.5.1",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5"
+  },
+  "devDependencies": {
+    "body-parser": "^1.18.2"
   }
 }
