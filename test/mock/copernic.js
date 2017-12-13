@@ -38,6 +38,9 @@ function MockCopernic() {
         }
       }))
     }).catch(function(e) {
+      if (!self.maskingExceptions) {
+        next(e)
+      }
       // This is basically the same as
       // next(e);
       // except without the noise to standard output; plus tests get a chance
@@ -60,6 +63,7 @@ MockCopernic.prototype.reset = function() {
   // Reset methods to their prototype, in case a test overrode them
   this.handleNewfact = MockCopernic.prototype.handleNewfact
   delete this.caughtException
+  delete this.maskingExceptions
 }
 
 MockCopernic.prototype.handleNewfact = function() {
