@@ -19,9 +19,30 @@ function Fmp2CopernicGateway(opts) {
   }, opts)
   let backendBaseUrl = self.opts.copernicHostPort
   self.get('/copernic/newfact', function(req, res) {
-    request.post('http://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture', function(error, response) {
-      console.log(response.body);
-      res.send("OK " + JSON.parse(response.body).E_RESULT.item.DOC_NUMBER);
+    request.post({
+      url: 'http://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
+      json: {
+        header: {
+          clientnr: 219253
+        },
+        "shipper": {
+          "name": "Michel Peiris",
+          "sciper": req.query.sciper,
+          "fund": "0052-2",
+          "email": "michel.peiris@epfl.ch",
+          "tel": "0216934760"
+        }
+      }
+    }, function(error, response) {
+      try {
+        if (error) throw error;
+        if (response.statusCode !== 200) {
+          throw new Error("Unexpected status code from COPERNIC: " + response.statusCode);
+        }
+        res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
+      } catch (e) {
+        res.send("ERROR " + e)
+      }
     })
   })
   return self

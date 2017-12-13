@@ -49,6 +49,7 @@ describe("tests for MockCopernic", function() {
       handledNewfact = true;
       throw new Error
     }
+    fakeCopernic.maskingExceptions = true
 
     request.post('http://' + fakeCopernicHostPort + '/piq/RESTAdapter/api/sd/facture', function(error, response) {
 
@@ -76,3 +77,6 @@ describe("tests for MockCopernic", function() {
 
 
 // .only for only one describe or it
+
+//read doc of "request node js"
+//use "node request parse" to parse the JSON
