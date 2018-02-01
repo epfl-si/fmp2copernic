@@ -67,7 +67,7 @@ describe("/copernic/newfact gateway", function() {
     }
 
     return rp({
-      uri: uriTest().replace("EXTERNE", "INTERNE"),
+      uri: uriTest().replace("EXTERNE", "INTERNE")
     }).then(responseBody => {
       assert.equal(ordertypeInMock, "ZINT")
     })
@@ -83,12 +83,20 @@ describe("/copernic/newfact gateway", function() {
     }
 
     return rp({
-      uri: uriTest().replace("INTERNE", "EXTERNE"),
+      uri: uriTest().replace("INTERNE", "EXTERNE")
     }).then(responseBody => {
       assert.equal(ordertypeInMock, "ZEXT")
     })
   })
-
+  it("rejects invalid order type", function() {
+    return rp({
+      uri: uriTest().replace("EXTERNE", "JESUISFAUX"),
+      resolveWithFullResponse: true,
+      simple: false
+    }).then(function(r) {
+      assert.equal(r.statusCode, 500)
+    })
+  })
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
   })

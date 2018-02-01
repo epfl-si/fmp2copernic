@@ -60,6 +60,6 @@ function normalizeOrderType(ordertype) {
   } else if (ordertype == "EXTERNE") {
     return "ZEXT";
   } else {
-    throw new Error("unknow ordertype" + ordertype);
+    throw new Error("unknown ordertype " + ordertype);
   }
 }
