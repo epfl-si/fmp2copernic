@@ -57,6 +57,21 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
+  it.only("converts the order type", function() {
+    let ordertypeInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.header && req.body.header.ordertype) {
+        ordertypeInMock = req.body.header.ordertype;
+      }
+      return "56789"
+    }
+
+    return rp({
+      uri: uriTest(),
+    }).then(responseBody => {
+      assert.equal(ordertypeInMock, "ZINT")
+    })
+  })
 
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
