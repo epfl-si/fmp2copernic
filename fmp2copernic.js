@@ -19,34 +19,43 @@ function Fmp2CopernicGateway(opts) {
   }, opts)
   let backendBaseUrl = self.opts.copernicHostPort
   self.get('/copernic/newfact', function(req, res) {
-    request.post({
-      url: 'http://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
-      json: {
-        header: {
-          clientnr: 219253
-        },
-        "header": {
-          "ordertype": normalizeOrderType(req.query.ordertype)
-        },
-        "shipper": {
-          "name": "Michel Peiris",
-          "sciper": req.query.sciper,
-          "fund": "0052-2",
-          "email": "michel.peiris@epfl.ch",
-          "tel": "0216934760"
+    fetchPersonalData(req.query.sciper).then(function(personalData) {
+      request.post({
+        url: 'http://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
+        json: {
+          header: {
+            clientnr: 219253
+          },
+          "header": {
+            "ordertype": normalizeOrderType(req.query.ordertype)
+          },
+          "shipper": {
+            "name": "Michel Peiris",
+            "sciper": req.query.sciper,
+            "fund": "0052-2",
+            "email": "michel.peiris@epfl.ch",
+            "tel": "0216934760"
+          }
         }
-      }
-    }, function(error, response) {
-      try {
-        if (error) throw error;
-        if (response.statusCode !== 200) {
-          throw new Error("Unexpected status code from COPERNIC: " + response.statusCode);
+      }, function(error, response) {
+        try {
+          if (error) throw error;
+          if (response.statusCode !== 200) {
+            throw new Error("Unexpected status code from COPERNIC: " + response.statusCode);
+          }
+          res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
+        } catch (e) {
+          res.status(500);
+          res.send("ERROR " + e);
+          console.log(e);
         }
-        res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
-      } catch (e) {
-        res.send("ERROR " + e)
-      }
+      })
+    }).catch(function(e) {
+      res.status(500);
+      res.send("ERROR " + e);
+      console.log(e);
     })
+
   })
   return self
 }
@@ -62,4 +71,12 @@ function normalizeOrderType(ordertype) {
   } else {
     throw new Error("unknown ordertype " + ordertype);
   }
+}
+
+function fetchPersonalData() {
+  return new Promise(function(resolve, reject) {
+    process.nextTick(function() {
+      resolve({})
+    })
+  })
 }
