@@ -21,7 +21,7 @@ describe("/copernic/newfact gateway", function() {
   beforeEach(function() {
     fakeCopernic.reset();
   })
-  let uriTest = () => underTest.baseUrl + "/copernic/newfact?ordertype=INTERNE" +
+  let uriTest = () => underTest.baseUrl + "/copernic/newfact?ordertype=EXTERNE" +
     "&ordernr=OF-4-2017&currency=CHF&clientnr=243371&fictr=0380" +
     "&name=FAC-4-2017&sciper=106550&fund=520088&number=9010192" +
     "&qty=1&price=3140&text=Projet%20:%20test%20Copernic" +
@@ -57,7 +57,7 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
-  it.only("converts the order type", function() {
+  it("converts the order type", function() {
     let ordertypeInMock = null;
     fakeCopernic.handleNewfact = function(req) {
       if (req && req.body && req.body.header && req.body.header.ordertype) {
@@ -67,9 +67,25 @@ describe("/copernic/newfact gateway", function() {
     }
 
     return rp({
-      uri: uriTest(),
+      uri: uriTest().replace("EXTERNE", "INTERNE"),
     }).then(responseBody => {
       assert.equal(ordertypeInMock, "ZINT")
+    })
+  })
+
+  it("converts the order type", function() {
+    let ordertypeInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.header && req.body.header.ordertype) {
+        ordertypeInMock = req.body.header.ordertype;
+      }
+      return "56789"
+    }
+
+    return rp({
+      uri: uriTest().replace("INTERNE", "EXTERNE"),
+    }).then(responseBody => {
+      assert.equal(ordertypeInMock, "ZEXT")
     })
   })
 

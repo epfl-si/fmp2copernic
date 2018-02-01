@@ -25,6 +25,9 @@ function Fmp2CopernicGateway(opts) {
         header: {
           clientnr: 219253
         },
+        "header": {
+          "ordertype": normalizeOrderType(req.query.ordertype)
+        },
         "shipper": {
           "name": "Michel Peiris",
           "sciper": req.query.sciper,
@@ -49,3 +52,14 @@ function Fmp2CopernicGateway(opts) {
 }
 
 module.exports = Fmp2CopernicGateway
+
+
+function normalizeOrderType(ordertype) {
+  if (ordertype == "INTERNE") {
+    return "ZINT";
+  } else if (ordertype == "EXTERNE") {
+    return "ZEXT";
+  } else {
+    throw new Error("unknow ordertype" + ordertype);
+  }
+}
