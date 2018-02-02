@@ -26,9 +26,6 @@
         let option = {
           url: self.opts.protocol + '://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
           json: {
-            header: {
-              clientnr: 219253
-            },
             "header": {
               "ordertype": normalizeOrderType(req.query.ordertype)
             },
@@ -53,7 +50,7 @@
           try {
             if (error) throw error;
             if (response.statusCode !== 200) {
-              throw new Error("Unexpected status code from COPERNIC: " + response.statusCode);
+              throw new Error("Unexpected status code from COPERNIC: " + response.statusCode + " " + response.body);
             }
             res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
           } catch (e) {
