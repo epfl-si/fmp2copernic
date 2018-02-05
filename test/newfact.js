@@ -88,6 +88,7 @@ describe("/copernic/newfact gateway", function() {
       assert.equal(ordertypeInMock, "ZEXT")
     })
   })
+
   it("rejects invalid order type", function() {
     return rp({
       uri: uriTest().replace("EXTERNE", "JESUISFAUX"),
@@ -97,6 +98,25 @@ describe("/copernic/newfact gateway", function() {
       assert.equal(r.statusCode, 500)
     })
   })
+
+  it("transmits the currency", function() {
+    let currencyInMock = "";
+    fakeCopernic.handleNewfact = function(req) {
+      console.log(currencyInMock + "toto" + req.body.header.currency);
+      if (req && req.body && req.body.header && req.body.header.currency) {
+        currencyInMock = req.body.header.currency;
+      }
+      return "12345"
+    }
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(currencyInMock, "CHF")
+      })
+
+  })
+
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
   })
