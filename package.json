@@ -19,6 +19,7 @@
   "homepage": "https://github.com/epfl-sdf/fmp2copernic#readme",
   "dependencies": {
     "chai": "^4.1.2",
+    "epfl-people-api": "^1.0.0",
     "express": "^4.16.2",
     "express-promise": "^0.4.0",
     "lodash": "^4.17.4",

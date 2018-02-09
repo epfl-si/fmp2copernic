@@ -1,7 +1,8 @@
 let assert = require("assert"),
   Copernic = require("./mock/copernic.js"),
   Fmp2CopernicGateway = require("../fmp2copernic.js"),
-  rp = require('request-promise-native')
+  rp = require('request-promise-native'),
+  epflPeopleApi = require('epfl-people-api')
 
 describe("/copernic/newfact gateway", function() {
   let underTest, fakeCopernic;
@@ -23,7 +24,7 @@ describe("/copernic/newfact gateway", function() {
   })
   let uriTest = () => underTest.baseUrl + "/copernic/newfact?ordertype=EXTERNE" +
     "&ordernr=OF-4-2017&currency=CHF&clientnr=243371&fictr=0380" +
-    "&name=FAC-4-2017&sciper=106550&fund=520088&number=9010192" +
+    "&name=FAC-4-2017&sciper=271774&fund=520088&number=9010192" +
     "&qty=1&price=3140&text=Projet%20:%20test%20Copernic" +
     "&execmode=SIMU" +
     "&PathFacturePDF=P:%2FATPR%2FTravaux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FFAC_OF-4-2017.pdf" +
@@ -102,7 +103,6 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the currency", function() {
     let currencyInMock = "";
     fakeCopernic.handleNewfact = function(req) {
-      console.log(currencyInMock + "toto" + req.body.header.currency);
       if (req && req.body && req.body.header && req.body.header.currency) {
         currencyInMock = req.body.header.currency;
       }
@@ -114,9 +114,36 @@ describe("/copernic/newfact gateway", function() {
       .then(responseBody => {
         assert.equal(currencyInMock, "CHF")
       })
-
   })
 
+  it.only("check the name", function() {
+    let nameInMock = null,
+      sciperInMock = 0,
+      infoPers = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.shipper && req.body.shipper.name) {
+        nameInMock = req.body.shipper.name;
+      }
+      if (req && req.body && req.body.shipper && req.body.shipper.sciper) {
+        sciperInMock = req.body.shipper.sciper;
+      }
+      sciperInMock = parseInt(req.body.shipper.sciper);
+    }
+    return rp({
+        uri: uriTest(),
+      }).then(function() {
+
+        return epflPeopleApi.findBySciper(sciperInMock, 'en')
+      })
+      .then(function(person) {
+
+        infoPers = person.firstname + " " + person.name;
+      })
+      .then(() => {
+
+        assert.equal(nameInMock, infoPers)
+      })
+  })
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
   })
