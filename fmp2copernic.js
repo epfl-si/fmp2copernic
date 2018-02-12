@@ -30,7 +30,8 @@ function Fmp2CopernicGateway(opts) {
         json: {
           "header": {
             "ordertype": normalizeOrderType(req.query.ordertype),
-            "currency": req.query.currency
+            "currency": req.query.currency,
+            "clientnr": req.query.clientnr
           },
           "shipper": {
             "name": person.firstname + " " + person.name,

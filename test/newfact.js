@@ -22,13 +22,22 @@ describe("/copernic/newfact gateway", function() {
   beforeEach(function() {
     fakeCopernic.reset();
   })
-  let uriTest = () => underTest.baseUrl + "/copernic/newfact?ordertype=EXTERNE" +
-    "&ordernr=OF-4-2017&currency=CHF&clientnr=243371&fictr=0380" +
-    "&name=FAC-4-2017&sciper=271774&fund=520088&number=9010192" +
-    "&qty=1&price=3140&text=Projet%20:%20test%20Copernic" +
-    "&execmode=SIMU" +
-    "&PathFacturePDF=P:%2FATPR%2FTravaux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FFAC_OF-4-2017.pdf" +
-    "&PathDevisPDF=P:%2FATPR%2FTrav4ux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FDevis_OF-4-2017.pdf"
+  let uriTest = () => underTest.baseUrl + "/copernic/newfact?" +
+    "ordertype=EXTERNE&" + //OK
+    "ordernr=OF-4-2017&" + //
+    "currency=CHF&" + //OK
+    "clientnr=243371&" + //
+    "fictr=0380&" + //
+    "name=FAC-4-2017&" + //
+    "sciper=271774&" + //OK
+    "fund=520088&" + //
+    "number=9010192&" + //
+    "qty=1&" + //
+    "price=3140&" + //
+    "text=Projet%20:%20test%20Copernic&" + //
+    "execmode=SIMU&" + //
+    "PathFacturePDF=P:%2FATPR%2FTravaux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FFAC_OF-4-2017.pdf&" +
+    "PathDevisPDF=P:%2FATPR%2FTrav4ux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FDevis_OF-4-2017.pdf"
 
 
   it("decodes and forwards a simple request", function() {
@@ -54,7 +63,7 @@ describe("/copernic/newfact gateway", function() {
         uri: uriTest(),
       })
       .then(responseBody => {
-        assert.equal(sciperInMock, 106550)
+        assert.equal(sciperInMock, 271774)
       })
   })
 
@@ -116,7 +125,7 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
-  it.only("check the name", function() {
+  it("check the name", function() {
     let nameInMock = null,
       sciperInMock = 0,
       infoPers = null;
@@ -144,6 +153,24 @@ describe("/copernic/newfact gateway", function() {
         assert.equal(nameInMock, infoPers)
       })
   })
+
+  it("transmits the client number", function() {
+    var clientnrInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.header && req.body.header.clientnr) {
+        clientnrInMock = req.body.header.clientnr;
+      }
+      return "12345"
+    }
+
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(clientnrInMock, 243371)
+      })
+  })
+
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
   })
