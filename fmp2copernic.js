@@ -39,6 +39,9 @@ function Fmp2CopernicGateway(opts) {
             "fund": req.query.fund,
             "email": "michel.peiris@epfl.ch",
             "tel": "0216934760"
+          },
+          "item": {
+            "number": req.query.number
           }
         }
       }

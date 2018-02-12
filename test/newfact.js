@@ -188,6 +188,23 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
+  it("transmits the item number", function() {
+    var numberInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.item && req.body.item.number) {
+        numberInMock = req.body.item.number;
+      }
+      return "12345"
+    }
+
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(numberInMock, 9010192)
+      })
+  })
+
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
   })
