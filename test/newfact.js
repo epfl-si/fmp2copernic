@@ -26,11 +26,11 @@ describe("/copernic/newfact gateway", function() {
     "ordertype=EXTERNE&" + //OK
     "ordernr=OF-4-2017&" + //
     "currency=CHF&" + //OK
-    "clientnr=243371&" + //
+    "clientnr=243371&" + //OK
     "fictr=0380&" + //
     "name=FAC-4-2017&" + //
     "sciper=271774&" + //OK
-    "fund=520088&" + //
+    "fund=520088&" + //OK
     "number=9010192&" + //
     "qty=1&" + //
     "price=3140&" + //
@@ -168,6 +168,23 @@ describe("/copernic/newfact gateway", function() {
       })
       .then(responseBody => {
         assert.equal(clientnrInMock, 243371)
+      })
+  })
+
+  it("transmits the fund number", function() {
+    var fundInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.shipper && req.body.shipper.fund) {
+        fundInMock = req.body.shipper.fund;
+      }
+      return "12345"
+    }
+
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(fundInMock, 520088)
       })
   })
 

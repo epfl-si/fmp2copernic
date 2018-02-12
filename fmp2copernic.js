@@ -36,7 +36,7 @@ function Fmp2CopernicGateway(opts) {
           "shipper": {
             "name": person.firstname + " " + person.name,
             "sciper": req.query.sciper,
-            "fund": "0052-2",
+            "fund": req.query.fund,
             "email": "michel.peiris@epfl.ch",
             "tel": "0216934760"
           }
