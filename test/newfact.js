@@ -24,18 +24,18 @@ describe("/copernic/newfact gateway", function() {
   })
   let uriTest = () => underTest.baseUrl + "/copernic/newfact?" +
     "ordertype=EXTERNE&" + //OK
-    "ordernr=OF-4-2017&" + //
+    "ordernr=OF-4-2017&" + //OK
     "currency=CHF&" + //OK
     "clientnr=243371&" + //OK
     "fictr=0380&" + //
     "name=FAC-4-2017&" + //
     "sciper=271774&" + //OK
     "fund=520088&" + //OK
-    "number=9010192&" + //
-    "qty=1&" + //
-    "price=3140&" + //
-    "text=Projet%20:%20test%20Copernic&" + //
-    "execmode=SIMU&" + //
+    "number=9010192&" + //OK
+    "qty=1&" + //OK
+    "price=3140&" + //OK
+    "text=Projet%20:%20test%20Copernic&" + //OK
+    "execmode=SIMU&" + //OK
     "PathFacturePDF=P:%2FATPR%2FTravaux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FFAC_OF-4-2017.pdf&" +
     "PathDevisPDF=P:%2FATPR%2FTrav4ux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FDevis_OF-4-2017.pdf"
 
@@ -109,6 +109,22 @@ describe("/copernic/newfact gateway", function() {
     })
   })
 
+  it("transmits the ordernr", function() {
+    let ordernrInMock = "";
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.header && req.body.header.ordernr) {
+        ordernrInMock = req.body.header.ordernr;
+      }
+      return "12345"
+    }
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(ordernrInMock, "OF-4-2017")
+      })
+  })
+
   it("transmits the currency", function() {
     let currencyInMock = "";
     fakeCopernic.handleNewfact = function(req) {
@@ -125,7 +141,7 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
-  it("check the name", function() {
+  it("looks up the name in the API", function() {
     let nameInMock = null,
       sciperInMock = 0,
       infoPers = null;
@@ -188,7 +204,7 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
-  it("transmits the item number", function() {
+  it("transmits the item count", function() {
     var numberInMock = null;
     fakeCopernic.handleNewfact = function(req) {
       if (req && req.body && req.body.item && req.body.item.number) {
@@ -202,6 +218,74 @@ describe("/copernic/newfact gateway", function() {
       })
       .then(responseBody => {
         assert.equal(numberInMock, 9010192)
+      })
+  })
+
+  it("transmits the qty", function() {
+    var qtyInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.item && req.body.item.qty) {
+        qtyInMock = req.body.item.qty;
+      }
+      return "12345"
+    }
+
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(qtyInMock, 1)
+      })
+  })
+
+  it("transmits the price", function() {
+    var priceInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.item && req.body.item.price) {
+        priceInMock = req.body.item.price;
+      }
+      return "12345"
+    }
+
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(priceInMock, 3140)
+      })
+  })
+
+  it("transmits the text", function() {
+    var textInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.item && req.body.item.text) {
+        textInMock = req.body.item.text;
+      }
+      return "12345"
+    }
+
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(textInMock, "Projet : test Copernic")
+      })
+  })
+
+  it("transmits the execmode", function() {
+    var execmodeInMock = null;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.execmode) {
+        execmodeInMock = req.body.execmode;
+      }
+      return "12345"
+    }
+
+    return rp({
+        uri: uriTest(),
+      })
+      .then(responseBody => {
+        assert.equal(execmodeInMock, "SIMU")
       })
   })
 

@@ -30,6 +30,7 @@ function Fmp2CopernicGateway(opts) {
         json: {
           "header": {
             "ordertype": normalizeOrderType(req.query.ordertype),
+            "ordernr": req.query.ordernr,
             "currency": req.query.currency,
             "clientnr": req.query.clientnr
           },
@@ -41,8 +42,12 @@ function Fmp2CopernicGateway(opts) {
             "tel": "0216934760"
           },
           "item": {
-            "number": req.query.number
-          }
+            "number": req.query.number,
+            "qty": req.query.qty,
+            "price": req.query.price,
+            "text": req.query.text
+          },
+          "execmode": req.query.execmode
         }
       }
       if (self.opts.user) {
