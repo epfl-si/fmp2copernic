@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/epfl-sdf/fmp2copernic#readme",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "chai": "^4.1.2",
     "epfl-people-api": "^1.0.0",
     "express": "^4.16.2",

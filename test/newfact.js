@@ -125,6 +125,17 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
+  it("rejects if have no fictr or clientnr", function() {
+    return rp({
+      uri: uriTest().replace("clientnr", "clientnrZ"),
+      uri: uriTest().replace("fictr", "fictrZ"),
+      resolveWithFullResponse: true,
+      simple: false
+    }).then(function(r) {
+      assert.equal(r.statusCode, 500)
+    })
+  })
+
   it("transmits the currency", function() {
     let currencyInMock = "";
     fakeCopernic.handleNewfact = function(req) {
