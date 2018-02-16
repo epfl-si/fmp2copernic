@@ -304,3 +304,10 @@ describe("/copernic/newfact gateway", function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
   })
 })
+
+
+
+
+
+
+// TODO: it serve a 500 statusCode for {"E_RESULT":{"item":{"DOC_NUMBER":"","REC_DATE":"2018-02-16","PAYMENT_DUE_DATE":"2018-02-16","PURCH_NO":"OF-1-2018","TRANSMITTER":"","TRANSMITTER_NR":"","RECEIVER":"","RECEIVER_NR":"","AMOUNT_CHF":0,"NET_VAL_HD":0,"CURREN_ISO":"","IS_ERROR":"X","LOG":{"item":{"TYPE":"E","MESSAGE":"Pour client 196732, fiche client non définie"}}}}}
