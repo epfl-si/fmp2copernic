@@ -47,7 +47,7 @@ function Fmp2CopernicGateway(opts) {
             "price": req.query.price,
             "text": req.query.text
           },
-          "execmode": req.query.execmode
+          "execmode": "PRES"
         }
       }
       if (self.opts.user) {
