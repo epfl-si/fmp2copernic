@@ -215,11 +215,11 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
-  it("transmits the item count", function() {
+  it("transmits the items count", function() {
     var numberInMock = null;
     fakeCopernic.handleNewfact = function(req) {
-      if (req && req.body && req.body.item && req.body.item.number) {
-        numberInMock = req.body.item.number;
+      if (req && req.body && req.body.items && req.body.items.number) {
+        numberInMock = req.body.items.number;
       }
       return "12345"
     }
@@ -235,8 +235,8 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the qty", function() {
     var qtyInMock = null;
     fakeCopernic.handleNewfact = function(req) {
-      if (req && req.body && req.body.item && req.body.item.qty) {
-        qtyInMock = req.body.item.qty;
+      if (req && req.body && req.body.items && req.body.items.qty) {
+        qtyInMock = req.body.items.qty;
       }
       return "12345"
     }
@@ -252,8 +252,8 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the price", function() {
     var priceInMock = null;
     fakeCopernic.handleNewfact = function(req) {
-      if (req && req.body && req.body.item && req.body.item.price) {
-        priceInMock = req.body.item.price;
+      if (req && req.body && req.body.items && req.body.items.price) {
+        priceInMock = req.body.items.price;
       }
       return "12345"
     }
@@ -269,8 +269,8 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the text", function() {
     var textInMock = null;
     fakeCopernic.handleNewfact = function(req) {
-      if (req && req.body && req.body.item && req.body.item.text) {
-        textInMock = req.body.item.text;
+      if (req && req.body && req.body.items && req.body.items.text) {
+        textInMock = req.body.items.text;
       }
       return "12345"
     }
@@ -310,4 +310,4 @@ describe("/copernic/newfact gateway", function() {
 
 
 
-// TODO: it serve a 500 statusCode for {"E_RESULT":{"item":{"DOC_NUMBER":"","REC_DATE":"2018-02-16","PAYMENT_DUE_DATE":"2018-02-16","PURCH_NO":"OF-1-2018","TRANSMITTER":"","TRANSMITTER_NR":"","RECEIVER":"","RECEIVER_NR":"","AMOUNT_CHF":0,"NET_VAL_HD":0,"CURREN_ISO":"","IS_ERROR":"X","LOG":{"item":{"TYPE":"E","MESSAGE":"Pour client 196732, fiche client non définie"}}}}}
+// TODO: it serve a 500 statusCode for {"E_RESULT":{"items":{"DOC_NUMBER":"","REC_DATE":"2018-02-16","PAYMENT_DUE_DATE":"2018-02-16","PURCH_NO":"OF-1-2018","TRANSMITTER":"","TRANSMITTER_NR":"","RECEIVER":"","RECEIVER_NR":"","AMOUNT_CHF":0,"NET_VAL_HD":0,"CURREN_ISO":"","IS_ERROR":"X","LOG":{"items":{"TYPE":"E","MESSAGE":"Pour client 196732, fiche client non définie"}}}}}
