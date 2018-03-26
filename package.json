@@ -4,7 +4,7 @@
   "description": "Passerelle web entre la base de données FileMaker pro de la STI et le service de facturation Copernic.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node test/manual/run_fmp2copernic.js",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "repository": {
