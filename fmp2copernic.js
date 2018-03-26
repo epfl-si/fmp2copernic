@@ -47,7 +47,7 @@ function Fmp2CopernicGateway(opts) {
             "price": req.query.price,
             "text": req.query.text
           },
-          "execmode": "PRES"
+          "execmode": req.query.execmode
         }
       }
       if (self.opts.user) {
@@ -84,6 +84,16 @@ module.exports = Fmp2CopernicGateway
 
 
 function normalizeOrderType(ordertype) {
+  if (ordertype == "INTERNE") {
+    return "ZINT";
+  } else if (ordertype == "EXTERNE") {
+    return "ZEXT";
+  } else {
+    throw new Error("unknown ordertype " + ordertype);
+  }
+}
+
+function normalize(ordertype) {
   if (ordertype == "INTERNE") {
     return "ZINT";
   } else if (ordertype == "EXTERNE") {

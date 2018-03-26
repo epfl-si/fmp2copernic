@@ -127,8 +127,8 @@ describe("/copernic/newfact gateway", function() {
 
   it("rejects if have no fictr or clientnr", function() {
     return rp({
-      uri: uriTest().replace("clientnr", "clientnrZ"),
-      uri: uriTest().replace("fictr", "fictrZ"),
+      uri: uriTest().replace("clientnr", ""),
+      uri: uriTest().replace("fictr", ""),
       resolveWithFullResponse: true,
       simple: false
     }).then(function(r) {
