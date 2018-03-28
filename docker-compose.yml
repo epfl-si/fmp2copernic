@@ -8,5 +8,8 @@ services:
     image: epflsti/fmp2copernic-server
     # See ./Dockerfile for what "build" consists of:
     build: .
-    ports:
-      - "3000:3000"
+    ports: ["3000:3000"]
+    volumes:
+      - ./config.json:/usr/src/app/config.json
+      - ./secrets.json:/usr/src/app/secrets.json
+    restart: always
