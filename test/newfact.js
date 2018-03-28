@@ -27,7 +27,7 @@ describe("/copernic/newfact gateway", function() {
     "ordernr=OF-4-2017&" + //OK
     "currency=CHF&" + //OK
     "clientnr=243371&" + //OK
-    "fictr=0380&" + //
+    // "fictr=0380&" + //
     "name=FAC-4-2017&" + //
     "sciper=271774&" + //OK
     "fund=520088&" + //OK
@@ -127,8 +127,7 @@ describe("/copernic/newfact gateway", function() {
 
   it("rejects if have no fictr or clientnr", function() {
     return rp({
-      uri: uriTest().replace("clientnr", ""),
-      uri: uriTest().replace("fictr", ""),
+      uri: uriTest().replace("clientnr", "c").replace("fictr", "f"),
       resolveWithFullResponse: true,
       simple: false
     }).then(function(r) {

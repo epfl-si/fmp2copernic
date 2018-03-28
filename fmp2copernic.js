@@ -25,31 +25,33 @@ function Fmp2CopernicGateway(opts) {
   let backendBaseUrl = self.opts.copernicHostPort
   self.get('/copernic/newfact', function(req, res) {
     epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en').then(function(person) {
-      let option = {
-        url: self.opts.protocol + '://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
-        json: {
-          "header": {
-            "ordertype": normalizeOrderType(req.query.ordertype),
-            "ordernr": req.query.ordernr,
-            "currency": req.query.currency,
-            "clientnr": req.query.clientnr
-          },
-          "shipper": {
-            "name": person.firstname + " " + person.name,
-            "sciper": req.query.sciper,
-            "fund": req.query.fund,
-            "email": "michel.peiris@epfl.ch",
-            "tel": "0216934760"
-          },
-          "items": {
-            "number": req.query.number,
-            "qty": req.query.qty,
-            "price": req.query.price,
-            "text": req.query.text
-          },
-          "execmode": req.query.execmode
+      let queryParams = normalize(req.query),
+        option = {
+          url: self.opts.protocol + '://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
+          json: {
+            "header": {
+              "ordertype": queryParams.ordertype,
+              "ordernr": queryParams.ordernr,
+              "currency": queryParams.currency,
+              "clientnr": queryParams.clientnr,
+              "fictr": queryParams.fictr
+            },
+            "shipper": {
+              "name": person.firstname + " " + person.name,
+              "sciper": queryParams.sciper,
+              "fund": queryParams.fund,
+              "email": "michel.peiris@epfl.ch",
+              "tel": "0216934760"
+            },
+            "items": {
+              "number": queryParams.number,
+              "qty": queryParams.qty,
+              "price": queryParams.price,
+              "text": queryParams.text
+            },
+            "execmode": queryParams.execmode
+          }
         }
-      }
       if (self.opts.user) {
         option.auth = {
           'user': self.opts.user,
@@ -83,22 +85,36 @@ function Fmp2CopernicGateway(opts) {
 module.exports = Fmp2CopernicGateway
 
 
-function normalizeOrderType(ordertype) {
-  if (ordertype == "INTERNE") {
-    return "ZINT";
-  } else if (ordertype == "EXTERNE") {
-    return "ZEXT";
+function normalize(query) {
+  let normalized = {};
+  debugger;
+  if (query.ordertype == "INTERNE") {
+    normalized.ordertype = "ZINT";
+  } else if (query.ordertype == "EXTERNE") {
+    normalized.ordertype = "ZEXT";
   } else {
     throw new Error("unknown ordertype " + ordertype);
   }
-}
+  if (!query.fictr && !query.clientnr) {
+    throw new Error("no fictr or clientnr");
+  } else if (query.fictr && query.clientnr) {
+    throw new Error("you can't have fictr AND clientnr");
+  } else if (query.fictr) {
+    normalized.fictr = query.fictr;
+  } else /*(clientnr)*/ {
+    normalized.clientnr = query.clientnr;
+  }
 
-function normalize(ordertype) {
-  if (ordertype == "INTERNE") {
-    return "ZINT";
-  } else if (ordertype == "EXTERNE") {
-    return "ZEXT";
-  } else {
-    throw new Error("unknown ordertype " + ordertype);
-  }
+  // XXX Improve
+  normalized.ordernr = query.ordernr;
+  normalized.qty = query.qty;
+  normalized.price = query.price;
+  normalized.currency = query.currency;
+  normalized.fund = query.fund;
+  normalized.text = query.text;
+  normalized.sciper = query.sciper;
+  normalized.number = query.number;
+  normalized.execmode = query.execmode;
+
+  return normalized;
 }
