@@ -2,7 +2,12 @@ let assert = require("assert"),
   Copernic = require("./mock/copernic.js"),
   Fmp2CopernicGateway = require("../fmp2copernic.js"),
   rp = require('request-promise-native'),
-  epflPeopleApi = require('epfl-people-api')
+  epflPeopleApi = require('epfl-people-api'),
+  os = require('os'),
+  tmpdir = os.tmpdir(),
+  util = require("util"),
+  fs = require('fs'),
+  fp = util.promisify(fs.writeFile)
 
 describe("/copernic/newfact gateway", function() {
   let underTest, fakeCopernic;
@@ -11,7 +16,8 @@ describe("/copernic/newfact gateway", function() {
     return fakeCopernic.run().then(function() {
       underTest = new Fmp2CopernicGateway({
         port: 0, // Let the OS pick a port
-        copernicHostPort: fakeCopernic.getHostPort()
+        copernicHostPort: fakeCopernic.getHostPort(),
+        attachmentDirectory: tmpdir
       })
       return underTest.run()
     }).then(function() {
@@ -308,6 +314,31 @@ describe("/copernic/newfact gateway", function() {
         assert.equal(execmodeInMock, "SIMU")
       })
   })
+
+  it("transmits the filecontent", function() {
+    let attachmentInMock = null;
+    let fileContent = "lorem ipsum";
+    let base64encoded = Buffer.from(fileContent).toString('base64');
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.attachment) {
+        attachmentInMock = req.body.attachment;
+      }
+      return "12345"
+    }
+    return fp(
+      tmpdir + '/test1.pdf', fileContent
+    ).then(function() {
+
+      return rp({
+        uri: uriTest(), // TODO: set PathDevisPDF to "P:/test1.pdf"
+      })
+    }).then(responseBody => {
+      console.log(attachmentInMock);
+      assert.equal(attachmentInMock[0].filecontent, base64encoded)
+    })
+  })
+
+
 
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())

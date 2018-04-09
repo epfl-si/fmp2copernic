@@ -14,6 +14,7 @@ fmp2CopernicGateway = new Fmp2CopernicGateway({
   port: config.port || 3000,
   copernicHostPort: "sapservices.epfl.ch",
   protocol: config.protocol || "http",
+  attachmentDirectory: config.attachmentDirectory,
   user: secrets.user,
   password: secrets.password
 })

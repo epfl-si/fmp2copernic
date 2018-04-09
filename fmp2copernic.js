@@ -24,7 +24,15 @@ function Fmp2CopernicGateway(opts) {
   }, opts)
   let backendBaseUrl = self.opts.copernicHostPort
   self.get('/copernic/newfact', function(req, res) {
-    epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en').then(function(person) {
+    let person = null,
+      attachmentContents = null
+    epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en').then(function(p) {
+      person = p;
+
+
+
+
+
       let queryParams = normalize(req.query),
         option = {
           url: self.opts.protocol + '://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
@@ -43,6 +51,19 @@ function Fmp2CopernicGateway(opts) {
               "email": "michel.peiris@epfl.ch",
               "tel": "0216934760"
             },
+            "attachment": [{
+              "filename": "test1.pdf",
+              "filetype": "application/pdf",
+              "filesecription": "test attach",
+              "filecontent": "bG9yZW0gaXBzdW0="
+            }, {
+              "filename": "test2.pdf",
+              "filetype": "application/pdf",
+              "filesecription": "test attach",
+              "filecontent": "BASE64ENCODED",
+              "fileprivate": true
+            }],
+
             "items": {
               "number": queryParams.number,
               "qty": queryParams.qty,
@@ -87,7 +108,6 @@ module.exports = Fmp2CopernicGateway
 
 function normalize(query) {
   let normalized = {};
-  debugger;
   if (query.ordertype == "INTERNE") {
     normalized.ordertype = "ZINT";
   } else if (query.ordertype == "EXTERNE") {
