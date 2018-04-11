@@ -7,7 +7,9 @@ let assert = require("assert"),
   tmpdir = os.tmpdir(),
   util = require("util"),
   fs = require('fs'),
-  fp = util.promisify(fs.writeFile)
+  fp = util.promisify(fs.writeFile),
+  _ = require("lodash"),
+  querystring = require('querystring')
 
 describe("/copernic/newfact gateway", function() {
   let underTest, fakeCopernic;
@@ -28,22 +30,23 @@ describe("/copernic/newfact gateway", function() {
   beforeEach(function() {
     fakeCopernic.reset();
   })
-  let uriTest = () => underTest.baseUrl + "/copernic/newfact?" +
-    "ordertype=EXTERNE&" + //OK
-    "ordernr=OF-4-2017&" + //OK
-    "currency=CHF&" + //OK
-    "clientnr=243371&" + //OK
-    // "fictr=0380&" + //
-    "name=FAC-4-2017&" + //
-    "sciper=271774&" + //OK
-    "fund=520088&" + //OK
-    "number=9010192&" + //OK
-    "qty=1&" + //OK
-    "price=3140&" + //OK
-    "text=Projet%20:%20test%20Copernic&" + //OK
-    "execmode=SIMU&" + //OK
-    "PathFacturePDF=P:%2FATPR%2FTravaux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FFAC_OF-4-2017.pdf&" +
-    "PathDevisPDF=P:%2FATPR%2FTrav4ux%2F2017%2FSTI-DO%2FQuatravaux%20Dominique%20Herv%C3%A9%20Claude%2F25.09.2017-OF-4%2FDevis_OF-4-2017.pdf"
+  let uriTest = (params) => underTest.baseUrl + "/copernic/newfact?" + querystring.stringify(
+    _.extend({
+      ordertype: 'EXTERNE',
+      ordernr: 'OF-4-2017',
+      currency: 'CHF',
+      clientnr: '243371',
+      name: 'FAC-4-2017',
+      sciper: '271774',
+      fund: '520088',
+      number: '9010192',
+      qty: '1',
+      price: '3140',
+      text: 'Projet : test Copernic',
+      execmode: 'SIMU',
+      // PathFacturePDF: 'P:/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/FAC_OF-4-2017.pdf',
+      // PathDevisPDF: 'P:/ATPR/Trav4ux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf'
+    }, params))
 
 
   it("decodes and forwards a simple request", function() {
@@ -83,7 +86,9 @@ describe("/copernic/newfact gateway", function() {
     }
 
     return rp({
-      uri: uriTest().replace("EXTERNE", "INTERNE")
+      uri: uriTest({
+        ordertype: "INTERNE"
+      })
     }).then(responseBody => {
       assert.equal(ordertypeInMock, "ZINT")
     })
@@ -99,7 +104,9 @@ describe("/copernic/newfact gateway", function() {
     }
 
     return rp({
-      uri: uriTest().replace("INTERNE", "EXTERNE")
+      uri: uriTest({
+        ordertype: "EXTERNE"
+      })
     }).then(responseBody => {
       assert.equal(ordertypeInMock, "ZEXT")
     })
@@ -107,7 +114,9 @@ describe("/copernic/newfact gateway", function() {
 
   it("rejects invalid order type", function() {
     return rp({
-      uri: uriTest().replace("EXTERNE", "JESUISFAUX"),
+      uri: uriTest({
+        ordertype: "JESUISFAUX"
+      }),
       resolveWithFullResponse: true,
       simple: false
     }).then(function(r) {
@@ -133,7 +142,10 @@ describe("/copernic/newfact gateway", function() {
 
   it("rejects if have no fictr or clientnr", function() {
     return rp({
-      uri: uriTest().replace("clientnr", "c").replace("fictr", "f"),
+      uri: uriTest({
+        clientnr: "c",
+        fictr: "f"
+      }),
       resolveWithFullResponse: true,
       simple: false
     }).then(function(r) {
