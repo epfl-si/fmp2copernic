@@ -329,7 +329,7 @@ describe("/copernic/newfact gateway", function() {
 
   it("transmits the filecontent", function() {
     let attachmentInMock = null;
-    let fileContent = "lorem ipsum";
+    let fileContent = "lorem ipsum$";
     let base64encoded = Buffer.from(fileContent).toString('base64');
     fakeCopernic.handleNewfact = function(req) {
       if (req && req.body && req.body.attachment) {
@@ -342,7 +342,9 @@ describe("/copernic/newfact gateway", function() {
     ).then(function() {
 
       return rp({
-        uri: uriTest(), // TODO: set PathDevisPDF to "P:/test1.pdf"
+        uri: uriTest({
+          PathDevisPDF: "P:/test1.pdf"
+        }),
       })
     }).then(responseBody => {
       console.log(attachmentInMock);

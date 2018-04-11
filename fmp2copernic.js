@@ -5,8 +5,11 @@ request = require('request');
 
 const express = require('express'),
   _ = require("lodash"),
+  util = require("util"),
+  fs = require('fs'),
   ourExpress = require("./lib/our-express.js"),
-  epflPeopleApi = require('epfl-people-api')
+  epflPeopleApi = require('epfl-people-api'),
+  readFile = util.promisify(fs.readFile)
 
 
 /**
@@ -25,14 +28,26 @@ function Fmp2CopernicGateway(opts) {
   let backendBaseUrl = self.opts.copernicHostPort
   self.get('/copernic/newfact', function(req, res) {
     let person = null,
-      attachmentContents = null
-    epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en').then(function(p) {
+      attachmentContents = null,
+      fileContent = null,
+      fileData = null,
+      readFileOrDoNothingPromise
+
+
+    if (req.query.PathDevisPDF) {
+      readFileOrDoNothingPromise = readFile('/tmp/test1.pdf').then(function(fc) {
+        fileContent = fc
+      })
+      // console.log(readFileOrDoNothingPromise);
+    } else {
+      readFileOrDoNothingPromise = new Promise((resolve) => {
+        resolve()
+      })
+    }
+    readFileOrDoNothingPromise.then(function() {
+      return epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en')
+    }).then(function(p) {
       person = p;
-
-
-
-
-
       let queryParams = normalize(req.query),
         option = {
           url: self.opts.protocol + '://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
@@ -51,18 +66,6 @@ function Fmp2CopernicGateway(opts) {
               "email": "michel.peiris@epfl.ch",
               "tel": "0216934760"
             },
-            "attachment": [{
-              "filename": "test1.pdf",
-              "filetype": "application/pdf",
-              "filesecription": "test attach",
-              "filecontent": "bG9yZW0gaXBzdW0="
-            }, {
-              "filename": "test2.pdf",
-              "filetype": "application/pdf",
-              "filesecription": "test attach",
-              "filecontent": "BASE64ENCODED",
-              "fileprivate": true
-            }],
 
             "items": {
               "number": queryParams.number,
@@ -78,6 +81,14 @@ function Fmp2CopernicGateway(opts) {
           'user': self.opts.user,
           'pass': self.opts.password
         }
+      }
+      if (fileContent) {
+        option.json.attachment = [{
+          "filename": "test1.pdf",
+          "filetype": "application/pdf",
+          "filesecription": "test attach",
+          "filecontent": Buffer.from(fileContent).toString('base64')
+        }]
       }
       request.post(option, function(error, response) {
         try {
