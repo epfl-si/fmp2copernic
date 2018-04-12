@@ -352,7 +352,23 @@ describe("/copernic/newfact gateway", function() {
     })
   })
 
-
+  xit("fails when the PathDevisPDF doesn't exist", function() {
+    let testInMock = false
+    fakeCopernic.handleNewfact = function(req) {
+      console.log("it shouldn't happen");
+      testInMock = true
+    }
+    return rp({
+      uri: uriTest({
+        PathDevisPDF: "P:/thisFileDoesNotExist.pdf"
+      }),
+      resolveWithFullResponse: true,
+      simple: false
+    }).then(function(r) {
+      assert.equal(testInMock, false)
+      assert.equal(r.statusCode, 500)
+    })
+  })
 
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
