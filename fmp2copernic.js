@@ -18,6 +18,7 @@ const express = require('express'),
  * @param opts.copernicHostPort Copernic back-end address in host:port format
  * @param opts.user set the user to send to copernic
  * @param opts.password set the password to send to copernic
+ * @param opts.attachmentDirectory
  */
 function Fmp2CopernicGateway(opts) {
   let self = ourExpress.new(Fmp2CopernicGateway)
