@@ -1,8 +1,9 @@
 let assert = require('assert'),
   rp = require('request-promise-native'),
   decodePath = require('../decodePath.js').decodePath,
-  deletePoint = require('../decodePath.js').deletePoint
-describe.only('DECODE', function() {
+  deletePoint = require('../decodePath.js').deletePoint,
+  debug = require('debug')('decodePathTest');
+describe('DECODE', function() {
   it('exists', function() {
     assert.ok(decodePath instanceof Function, "decodePath instanceof Function");
   })
@@ -19,7 +20,7 @@ describe.only('DECODE', function() {
     } catch (err) {
       assert(err instanceof Error);
       assert.equal(err.message, 'Wrong value');
-      console.log(err);
+      debug(err);
     }
   })
 })

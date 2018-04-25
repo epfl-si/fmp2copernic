@@ -9,7 +9,8 @@ let assert = require("assert"),
   fs = require('fs'),
   fp = util.promisify(fs.writeFile),
   _ = require("lodash"),
-  querystring = require('querystring')
+  querystring = require('querystring'),
+  debug = require('debug')('newfact');
 
 describe("/copernic/newfact gateway", function() {
   let underTest, fakeCopernic;
@@ -347,7 +348,7 @@ describe("/copernic/newfact gateway", function() {
         }),
       })
     }).then(responseBody => {
-      console.log(attachmentInMock);
+      debug(attachmentInMock);
       assert.equal(attachmentInMock[0].filecontent, base64encoded)
     })
   })
@@ -355,7 +356,7 @@ describe("/copernic/newfact gateway", function() {
   xit("fails when the PathDevisPDF doesn't exist", function() {
     let testInMock = false
     fakeCopernic.handleNewfact = function(req) {
-      console.log("it shouldn't happen");
+      debug("it shouldn't happen");
       testInMock = true
     }
     return rp({

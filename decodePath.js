@@ -1,4 +1,5 @@
-let assert = require('assert')
+let assert = require('assert'),
+  debug = require('debug')('decodePath');
 
 /**
  * @param pathNAS e.g. P:/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf
@@ -12,13 +13,13 @@ function decodePath(pathBASE, pathNAS) {
 
 function deletePoint(path) {
 
-  console.log(path.match(/\.\./i, ''));
+  debug(path.match(/\.\./i, ''));
   if (path.match(/\.\./i, '') != null) {
-    console.log("it is not OK");
+    debug("it is not OK");
     throw new Error('Wrong value');
   } else {
 
-    console.log("it is OK");
+    debug("it is OK");
     return
   }
 }

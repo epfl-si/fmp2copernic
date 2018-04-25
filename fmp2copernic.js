@@ -9,7 +9,8 @@ const express = require('express'),
   fs = require('fs'),
   ourExpress = require("./lib/our-express.js"),
   epflPeopleApi = require('epfl-people-api'),
-  readFile = util.promisify(fs.readFile)
+  readFile = util.promisify(fs.readFile),
+  debug = require('debug')('fmp2copernic');
 
 
 /**
@@ -39,7 +40,6 @@ function Fmp2CopernicGateway(opts) {
       readFileOrDoNothingPromise = readFile('/tmp/test1.pdf').then(function(fc) {
         fileContent = fc
       })
-      // console.log(readFileOrDoNothingPromise);
     } else {
       readFileOrDoNothingPromise = new Promise((resolve) => {
         resolve()
@@ -97,18 +97,18 @@ function Fmp2CopernicGateway(opts) {
           if (response.statusCode !== 200) {
             throw new Error("Unexpected status code from COPERNIC: " + response.statusCode + " " + response.body);
           }
-          console.log(JSON.stringify(response.body));
+          debug(JSON.stringify(response.body));
           res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
         } catch (e) {
           res.status(500);
           res.send("ERROR " + e);
-          console.log(e);
+          debug(e);
         }
       })
     }).catch(function(e) {
       res.status(500);
       res.send("ERROR " + e);
-      console.log(e);
+      debug(e);
     })
 
   })

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node test/manual/run_fmp2copernic.js",
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha --reporter spec",
+    "testDEBUG": "DEBUG=decodePath,decodePathTest,newfact,fmp2copernic,mockCopernicTests npm test"
   },
   "repository": {
     "type": "git",

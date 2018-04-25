@@ -1,6 +1,7 @@
 let assert = require("assert"),
   Copernic = require("./mock/copernic.js"),
-  request = require('request');
+  request = require('request'),
+  debug = require('debug')('mockCopernicTests');
 
 
 describe("tests for MockCopernic", function() {
@@ -21,9 +22,9 @@ describe("tests for MockCopernic", function() {
       return "12345"
     }
     request.post('http://' + fakeCopernicHostPort + '/piq/RESTAdapter/api/sd/facture', function(error, response) {
-      console.log('port:', fakeCopernicHostPort); // Print the port number
-      console.log('error:', error); // Print the error if one occurred
-      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+      debug('port:', fakeCopernicHostPort); // Print the port number
+      debug('error:', error); // Print the error if one occurred
+      debug('statusCode:', response && response.statusCode); // Print the response status code if a response was received
       if (error) {
         done(error)
       } else if (response.statusCode == 200) {
@@ -53,11 +54,11 @@ describe("tests for MockCopernic", function() {
 
     request.post('http://' + fakeCopernicHostPort + '/piq/RESTAdapter/api/sd/facture', function(error, response) {
 
-      console.log('port:', fakeCopernicHostPort); // Print the port number
-      console.log('error:', error); // Print the error if one occurred
-      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+      debug('port:', fakeCopernicHostPort); // Print the port number
+      debug('error:', error); // Print the error if one occurred
+      debug('statusCode:', response && response.statusCode); // Print the response status code if a response was received
       if (error) {
-        console.log("ne panique pas, c'est ce qu'on veut");
+        debug("ne panique pas, c'est ce qu'on veut");
         done(error)
       } else if ((response.statusCode == 500) && fakeCopernic.caughtException) {
         done()
