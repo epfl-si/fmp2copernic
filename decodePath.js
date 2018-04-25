@@ -9,5 +9,19 @@ function decodePath(pathBASE, pathNAS) {
   pathNAS = pathNAS.replace(/P:/i, '');
   return pathBASE + pathNAS
 }
+
+function deletePoint(path) {
+
+  console.log(path.match(/\.\./i, ''));
+  if (path.match(/\.\./i, '') != null) {
+    console.log("it is not OK");
+    throw new Error('Wrong value');
+  } else {
+
+    console.log("it is OK");
+    return
+  }
+}
+
 module.exports.decodePath = decodePath
 module.exports.deletePoint = deletePoint
