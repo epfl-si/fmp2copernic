@@ -7,3 +7,6 @@ describe.only('DECODE', function() {
     assert.ok(decodePath instanceof Function, "decodePath instanceof Function");
   })
 
+  it("decodes", function() {
+    assert.equal(decodePath("/var/filemaker/documents", "P:/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf"), "/var/filemaker/documents/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf")
+  })
