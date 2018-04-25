@@ -67,12 +67,20 @@ function Fmp2CopernicGateway(opts) {
               "email": "michel.peiris@epfl.ch",
               "tel": "0216934760"
             },
+            "partners": [{
+              "role": "AG",
+              "fictr": "0052",
+              "name2": "Station 7, 4ème Etage",
+              "name3": "Mme M-T. Porchet",
+              "email": "test@xyz.com"
+            }],
             "items": {
               "number": queryParams.number,
               "qty": queryParams.qty,
               "price": queryParams.price,
               "text": queryParams.text
             },
+
             "execmode": queryParams.execmode
           }
         }
@@ -110,8 +118,7 @@ function Fmp2CopernicGateway(opts) {
       debug(e);
     })
 
-  })
-  return self
+  }) return self
 }
 
 module.exports = Fmp2CopernicGateway
