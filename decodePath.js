@@ -8,10 +8,12 @@ let assert = require('assert'),
  */
 function decodePath(pathBASE, pathNAS) {
   pathNAS = pathNAS.replace(/P:/i, '');
-  return pathBASE + pathNAS
+  let finalPath = pathBASE + pathNAS;
+  checkPoint(finalPath);
+  return finalPath
 }
 
-function deletePoint(path) {
+function checkPoint(path) {
 
   debug(path.match(/\.\./i, ''));
   if (path.match(/\.\./i, '') != null) {
@@ -25,4 +27,4 @@ function deletePoint(path) {
 }
 
 module.exports.decodePath = decodePath
-module.exports.deletePoint = deletePoint
+module.exports.checkPoint = checkPoint

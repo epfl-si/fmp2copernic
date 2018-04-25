@@ -46,7 +46,7 @@ describe("/copernic/newfact gateway", function() {
       text: 'Projet : test Copernic',
       execmode: 'SIMU',
       // PathFacturePDF: 'P:/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/FAC_OF-4-2017.pdf',
-      // PathDevisPDF: 'P:/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf'
+      PathDevisPDF: '/var/filemaker/documents/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf'
     }, params))
 
 
@@ -353,20 +353,14 @@ describe("/copernic/newfact gateway", function() {
     })
   })
 
-  xit("fails when the PathDevisPDF doesn't exist", function() {
-    let testInMock = false
-    fakeCopernic.handleNewfact = function(req) {
-      debug("it shouldn't happen");
-      testInMock = true
-    }
+  it("fails when the PathDevisPDF doesn't exist", function() {
     return rp({
       uri: uriTest({
-        PathDevisPDF: "P:/thisFileDoesNotExist.pdf"
+        PathDevisPDF: ""
       }),
       resolveWithFullResponse: true,
       simple: false
     }).then(function(r) {
-      assert.equal(testInMock, false)
       assert.equal(r.statusCode, 500)
     })
   })
@@ -375,10 +369,3 @@ describe("/copernic/newfact gateway", function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
   })
 })
-
-
-
-
-
-
-// TODO: it serve a 500 statusCode for {"E_RESULT":{"items":{"DOC_NUMBER":"","REC_DATE":"2018-02-16","PAYMENT_DUE_DATE":"2018-02-16","PURCH_NO":"OF-1-2018","TRANSMITTER":"","TRANSMITTER_NR":"","RECEIVER":"","RECEIVER_NR":"","AMOUNT_CHF":0,"NET_VAL_HD":0,"CURREN_ISO":"","IS_ERROR":"X","LOG":{"items":{"TYPE":"E","MESSAGE":"Pour client 196732, fiche client non définie"}}}}}

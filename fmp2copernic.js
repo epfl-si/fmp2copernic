@@ -67,7 +67,6 @@ function Fmp2CopernicGateway(opts) {
               "email": "michel.peiris@epfl.ch",
               "tel": "0216934760"
             },
-
             "items": {
               "number": queryParams.number,
               "qty": queryParams.qty,
@@ -85,7 +84,7 @@ function Fmp2CopernicGateway(opts) {
       }
       if (fileContent) {
         option.json.attachment = [{
-          "filename": "test1.pdf",
+          "filename": queryParams.filename,
           "filetype": "application/pdf",
           "filesecription": "test attach",
           "filecontent": Buffer.from(fileContent).toString('base64')
@@ -135,6 +134,11 @@ function normalize(query) {
     normalized.fictr = query.fictr;
   } else /*(clientnr)*/ {
     normalized.clientnr = query.clientnr;
+  }
+  if (!query.PathDevisPDF) {
+    throw new Error("no PathDevisPDF");
+  } else {
+    normalized.PathDevisPDF = query.PathDevisPDF;
   }
 
   // XXX Improve
