@@ -32,7 +32,7 @@
 		"filetype": "application/pdf",
 		"filesecription": "test attach",
 		"filecontent": "BASE64ENCODED"
-	     	},{
+		},{
 		"filename": "test2.pdf",
 		"filetype": "application/pdf",
 		"filesecription": "test attach",
@@ -81,7 +81,7 @@
 			"travelreqnr": "",
 			"travelreqmatnr": ""
 			}]
-		}, 
+		},
 		{
 		"number": "9010136",
 		"qty": 1,
