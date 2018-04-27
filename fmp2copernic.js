@@ -117,7 +117,6 @@ function Fmp2CopernicGateway(opts) {
       res.send("ERROR " + e);
       debug(e);
     })
-
   })
   return self
 }
