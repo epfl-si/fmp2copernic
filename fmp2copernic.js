@@ -69,7 +69,7 @@ function Fmp2CopernicGateway(opts) {
               "sciper": queryParams.sciper,
               "fund": queryParams.fund,
               "email": person.email,
-              "tel": person.phones
+              "tel": person.phones.split(',')[0]
             },
             "partners": [],
             "items": {
