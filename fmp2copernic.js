@@ -4,6 +4,7 @@
 request = require('request');
 
 const express = require('express'),
+  path = require('path'),
   _ = require("lodash"),
   decodePath  = require('./decodePath.js').decodePath,
   util = require("util"),
@@ -95,7 +96,7 @@ function Fmp2CopernicGateway(opts) {
       }
       if (fileContent) {
         option.json.attachment = [{
-          "filename": queryParams.filename,
+          "filename": path.basename(queryParams.PathDevisPDF),
           "filetype": "application/pdf",
           "filesecription": "test attach",
           "filecontent": Buffer.from(fileContent).toString('base64')

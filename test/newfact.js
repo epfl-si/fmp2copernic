@@ -328,6 +328,27 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
+  it("transmits the filename", function() {
+    let filenameInMock
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.attachment && req.body.attachment[0] && req.body.attachment[0].filename) {
+        filenameInMock = req.body.attachment[0].filename;
+      }
+      return "12345"
+    }
+    return fp(
+      tmpdir + '/test1.pdf', "It doesn't really matter what is in the PDF"
+    ).then(function() {
+      return rp({
+        uri: uriTest({
+          PathDevisPDF: "P:/test1.pdf"
+        })
+      })
+    }).then(function() {
+      assert.equal(filenameInMock, "test1.pdf");
+    })
+  })
+
   it("transmits the filecontent", function() {
     let attachmentInMock = null;
     let fileContent = "lorem ipsum$";
