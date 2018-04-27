@@ -68,16 +68,10 @@ function Fmp2CopernicGateway(opts) {
               "name": person.firstname + " " + person.name,
               "sciper": queryParams.sciper,
               "fund": queryParams.fund,
-              "email": "michel.peiris@epfl.ch",
-              "tel": "0216934760"
+              "email": person.email,
+              "tel": person.phones
             },
-            "partners": [{
-              "role": "AG",
-              "fictr": "0052",
-              "name2": "Station 7, 4ème Etage",
-              "name3": "Mme M-T. Porchet",
-              "email": "test@xyz.com"
-            }],
+            "partners": [],
             "items": {
               "number": queryParams.number,
               "qty": queryParams.qty,
