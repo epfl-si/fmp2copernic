@@ -146,9 +146,7 @@ function normalize(query) {
   } else /*(clientnr)*/ {
     normalized.clientnr = query.clientnr;
   }
-  if (!query.PathDevisPDF) {
-    throw new Error("no PathDevisPDF");
-  } else {
+  if (query.PathDevisPDF) {
     normalized.PathDevisPDF = query.PathDevisPDF;
   }
 
