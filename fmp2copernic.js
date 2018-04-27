@@ -5,6 +5,7 @@ request = require('request');
 
 const express = require('express'),
   _ = require("lodash"),
+  decodePath  = require('./decodePath.js').decodePath,
   util = require("util"),
   fs = require('fs'),
   ourExpress = require("./lib/our-express.js"),
@@ -37,7 +38,7 @@ function Fmp2CopernicGateway(opts) {
 
 
     if (req.query.PathDevisPDF) {
-      readFileOrDoNothingPromise = readFile('/tmp/test1.pdf').then(function(fc) {
+      readFileOrDoNothingPromise = readFile(decodePath(opts.attachmentDirectory,req.query.PathDevisPDF)).then(function(fc) {
         fileContent = fc
       })
     } else {
@@ -118,7 +119,8 @@ function Fmp2CopernicGateway(opts) {
       debug(e);
     })
 
-  }) return self
+  })
+	return self
 }
 
 module.exports = Fmp2CopernicGateway
