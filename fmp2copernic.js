@@ -30,6 +30,7 @@ function Fmp2CopernicGateway(opts) {
   }, opts)
   let backendBaseUrl = self.opts.copernicHostPort
   self.get('/copernic/newfact', function(req, res) {
+    debug('/copernic/newfact')
     let person = null,
       attachmentContents = null,
       fileContent = null,
@@ -39,6 +40,7 @@ function Fmp2CopernicGateway(opts) {
 
     if (req.query.PathDevisPDF) {
       readFileOrDoNothingPromise = readFile(decodePath(opts.attachmentDirectory,req.query.PathDevisPDF)).then(function(fc) {
+        debug('Read ' + req.query.PathDevisPDF + ' from disk OK, size ' + fc.length + ' bytes')
         fileContent = fc
       })
     } else {
