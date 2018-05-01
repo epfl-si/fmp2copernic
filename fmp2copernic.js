@@ -31,7 +31,7 @@ function Fmp2CopernicGateway(opts) {
   }, opts)
   let backendBaseUrl = self.opts.copernicHostPort
   self.get('/copernic/newfact', function(req, res) {
-    debug('/copernic/newfact')
+    debug(req.protocol + '://' + req.get('host') + req.originalUrl)
     let person = null,
       attachmentContents = null,
       fileContent = null,
