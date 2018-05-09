@@ -17,7 +17,6 @@ function MockCopernic() {
           "E_RESULT": {
             "item": {
               "DOC_NUMBER_TECH": 1,
-              // TODO: DOC_NUMBER = whatever the function handleNewfact returns
               "DOC_NUMBER": docId,
               "REC_DATE": "2016-02-10",
               "PAYMENT_DUE_DATE": "2016-02-10",
