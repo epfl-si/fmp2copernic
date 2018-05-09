@@ -12,6 +12,12 @@ let assert = require("assert"),
   querystring = require('querystring'),
   debug = require('debug')('newfact');
 
+if (! Promise.prototype.finally) {
+  Promise.prototype.finally = function (what) {
+    this.then(what, what)
+  }
+}
+
 describe("/copernic/newfact gateway", function() {
   let underTest, fakeCopernic;
   before(function() {
@@ -409,6 +415,8 @@ describe("/copernic/newfact gateway", function() {
       })
     }).then(function(responseBody) {
       assert(wentThroughTheNewEndpoint);
+    }).finally(function() {
+      return fmp2copernicJustForThisTest.shutdown()
     })
   })
 
