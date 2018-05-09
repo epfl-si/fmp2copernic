@@ -27,6 +27,7 @@ function Fmp2CopernicGateway(opts) {
   let self = ourExpress.new(Fmp2CopernicGateway)
   self.opts = _.extend({
     protocol: "http",
+    copernicBaseURL: "/piq/RESTAdapter/api",
     port: 3000
   }, opts)
   let backendBaseUrl = self.opts.copernicHostPort
@@ -36,8 +37,7 @@ function Fmp2CopernicGateway(opts) {
       attachmentContents = null,
       fileContent = null,
       fileData = null,
-      readFileOrDoNothingPromise
-
+      readFileOrDoNothingPromise;
 
     if (req.query.PathDevisPDF) {
       readFileOrDoNothingPromise = readFile(decodePath(opts.attachmentDirectory, req.query.PathDevisPDF)).then(function(fc) {
@@ -53,35 +53,36 @@ function Fmp2CopernicGateway(opts) {
       return epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en')
     }).then(function(p) {
       person = p;
-      let queryParams = normalize(req.query),
-        option = {
-          url: self.opts.protocol + '://' + backendBaseUrl + '/piq/RESTAdapter/api/sd/facture',
-          json: {
-            "header": {
-              "ordertype": queryParams.ordertype,
-              "ordernr": queryParams.ordernr,
-              "currency": queryParams.currency,
-              "clientnr": queryParams.clientnr,
-              "fictr": queryParams.fictr
-            },
-            "shipper": {
-              "name": person.firstname + " " + person.name,
-              "sciper": queryParams.sciper,
-              "fund": queryParams.fund,
-              "email": person.email,
-              "tel": person.phones.split(',')[0]
-            },
-            "partners": [],
-            "items": {
-              "number": queryParams.number,
-              "qty": queryParams.qty,
-              "price": queryParams.price,
-              "text": queryParams.text
-            },
+      let queryParams = normalize(req.query);
+      let url = self.opts.protocol + '://' + backendBaseUrl + self.opts.copernicBaseURL + '/sd/facture';
+      let option = {
+        url: url,
+        json: {
+          "header": {
+            "ordertype": queryParams.ordertype,
+            "ordernr": queryParams.ordernr,
+            "currency": queryParams.currency,
+            "clientnr": queryParams.clientnr,
+            "fictr": queryParams.fictr
+          },
+          "shipper": {
+            "name": person.firstname + " " + person.name,
+            "sciper": queryParams.sciper,
+            "fund": queryParams.fund,
+            "email": person.email,
+            "tel": person.phones.split(',')[0]
+          },
+          "partners": [],
+          "items": {
+            "number": queryParams.number,
+            "qty": queryParams.qty,
+            "price": queryParams.price,
+            "text": queryParams.text
+          },
 
-            "execmode": queryParams.execmode
-          }
+          "execmode": queryParams.execmode
         }
+      }
       if (self.opts.user) {
         option.auth = {
           'user': self.opts.user,

@@ -406,10 +406,9 @@ describe("/copernic/newfact gateway", function() {
       })
     return fmp2copernicJustForThisTest.run().then(function() {
       return rp({uri: uriTest({fakeCopernic: fmp2copernicJustForThisTest})})
+      })
     }).then(function(responseBody) {
-        assert(wentThroughTheNewEndpoint);
-    }).then(function() {
-      console.log(fmp2copernicJustForThisTest.listener.address().port)
+      assert(wentThroughTheNewEndpoint);
     })
   })
 
