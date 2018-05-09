@@ -5,19 +5,17 @@
 
 let Fmp2CopernicGateway = require("../../fmp2copernic.js"),
   fmp2CopernicGateway,
-  fs = require('fs');
+  fs = require('fs'),
+  _ = require('lodash');
 
 let config = JSON.parse(fs.readFileSync('config.json')),
   secrets = JSON.parse(fs.readFileSync('secrets.json'));
-
-fmp2CopernicGateway = new Fmp2CopernicGateway({
-  port: config.port || 3000,
+let copernicGatewayOpts = _.extend({
+  port: 3000,
   copernicHostPort: "sapservices.epfl.ch",
-  protocol: config.protocol || "http",
-  attachmentDirectory: config.attachmentDirectory,
-  user: secrets.user,
-  password: secrets.password
-})
+  protocol: "http"
+}, config, secrets)
+fmp2CopernicGateway = new Fmp2CopernicGateway(copernicGatewayOpts)
 return fmp2CopernicGateway.run()
   .then(function() {
     console.log("Fmp2Copernic running on port " +
