@@ -46,7 +46,7 @@ describe("/copernic/newfact gateway", function() {
       text: 'Projet : test Copernic',
       execmode: 'SIMU',
       // PathFacturePDF: 'P:/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/FAC_OF-4-2017.pdf',
-      PathDevisPDF: '/var/filemaker/documents/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf'
+      // PathDevisPDF: '/var/filemaker/documents/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf'
     }, params))
 
 
@@ -328,6 +328,27 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
+  it("transmits the filename", function() {
+    let filenameInMock
+    fakeCopernic.handleNewfact = function(req) {
+      if (req && req.body && req.body.attachment && req.body.attachment[0] && req.body.attachment[0].filename) {
+        filenameInMock = req.body.attachment[0].filename;
+      }
+      return "12345"
+    }
+    return fp(
+      tmpdir + '/test1.pdf', "It doesn't really matter what is in the PDF"
+    ).then(function() {
+      return rp({
+        uri: uriTest({
+          PathDevisPDF: "P:/test1.pdf"
+        })
+      })
+    }).then(function() {
+      assert.equal(filenameInMock, "test1.pdf");
+    })
+  })
+
   it("transmits the filecontent", function() {
     let attachmentInMock = null;
     let fileContent = "lorem ipsum$";
@@ -356,7 +377,7 @@ describe("/copernic/newfact gateway", function() {
   it("fails when the PathDevisPDF doesn't exist", function() {
     return rp({
       uri: uriTest({
-        PathDevisPDF: ""
+        PathDevisPDF: "P:/ThisFileDoesNotExist.pdf"
       }),
       resolveWithFullResponse: true,
       simple: false

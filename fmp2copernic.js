@@ -4,7 +4,9 @@
 request = require('request');
 
 const express = require('express'),
+  path = require('path'),
   _ = require("lodash"),
+  decodePath = require('./decodePath.js').decodePath,
   util = require("util"),
   fs = require('fs'),
   ourExpress = require("./lib/our-express.js"),
@@ -29,6 +31,7 @@ function Fmp2CopernicGateway(opts) {
   }, opts)
   let backendBaseUrl = self.opts.copernicHostPort
   self.get('/copernic/newfact', function(req, res) {
+    debug(req.protocol + '://' + req.get('host') + req.originalUrl)
     let person = null,
       attachmentContents = null,
       fileContent = null,
@@ -37,7 +40,8 @@ function Fmp2CopernicGateway(opts) {
 
 
     if (req.query.PathDevisPDF) {
-      readFileOrDoNothingPromise = readFile('/tmp/test1.pdf').then(function(fc) {
+      readFileOrDoNothingPromise = readFile(decodePath(opts.attachmentDirectory, req.query.PathDevisPDF)).then(function(fc) {
+        debug('Read ' + req.query.PathDevisPDF + ' from disk OK, size ' + fc.length + ' bytes')
         fileContent = fc
       })
     } else {
@@ -64,16 +68,10 @@ function Fmp2CopernicGateway(opts) {
               "name": person.firstname + " " + person.name,
               "sciper": queryParams.sciper,
               "fund": queryParams.fund,
-              "email": "michel.peiris@epfl.ch",
-              "tel": "0216934760"
+              "email": person.email,
+              "tel": person.phones.split(',')[0]
             },
-            "partners": [{
-              "role": "AG",
-              "fictr": "0052",
-              "name2": "Station 7, 4ème Etage",
-              "name3": "Mme M-T. Porchet",
-              "email": "test@xyz.com"
-            }],
+            "partners": [],
             "items": {
               "number": queryParams.number,
               "qty": queryParams.qty,
@@ -92,7 +90,7 @@ function Fmp2CopernicGateway(opts) {
       }
       if (fileContent) {
         option.json.attachment = [{
-          "filename": queryParams.filename,
+          "filename": path.basename(queryParams.PathDevisPDF),
           "filetype": "application/pdf",
           "filesecription": "test attach",
           "filecontent": Buffer.from(fileContent).toString('base64')
@@ -142,9 +140,7 @@ function normalize(query) {
   } else /*(clientnr)*/ {
     normalized.clientnr = query.clientnr;
   }
-  if (!query.PathDevisPDF) {
-    throw new Error("no PathDevisPDF");
-  } else {
+  if (query.PathDevisPDF) {
     normalized.PathDevisPDF = query.PathDevisPDF;
   }
 

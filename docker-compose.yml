@@ -12,4 +12,5 @@ services:
     volumes:
       - ./config.json:/usr/src/app/config.json
       - ./secrets.json:/usr/src/app/secrets.json
+      - /var/filemaker/documents:/var/nas
     restart: always
