@@ -23,15 +23,15 @@ describe("/copernic/newfact gateway", function() {
         attachmentDirectory: tmpdir
       })
       return underTest.run()
-    }).then(function() {
-      underTest.baseUrl = "http://localhost:" + underTest.listener.address().port
     })
   })
 
   beforeEach(function() {
-    fakeCopernic.reset();
+    fakeCopernic.reset()
   })
-  let uriTest = (params) => underTest.baseUrl + "/copernic/newfact?" + querystring.stringify(
+  function uriTest(params) {
+      let baseUrl = "http://localhost:" + ((params && params.fakeCopernic) ? params.fakeCopernic : underTest).listener.address().port
+      return baseUrl + "/copernic/newfact?" + querystring.stringify(
     _.extend({
       ordertype: 'EXTERNE',
       ordernr: 'OF-4-2017',
@@ -48,7 +48,7 @@ describe("/copernic/newfact gateway", function() {
       // PathFacturePDF: 'P:/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/FAC_OF-4-2017.pdf',
       // PathDevisPDF: '/var/filemaker/documents/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf'
     }, params))
-
+  }
 
   it("decodes and forwards a simple request", function() {
     return rp({
@@ -383,6 +383,33 @@ describe("/copernic/newfact gateway", function() {
       simple: false
     }).then(function(r) {
       assert.equal(r.statusCode, 500)
+    })
+  })
+
+  it("can be configured to use another base URL", function() {
+    fakeCopernic.serveAt('/somewhere/else');
+    let wentThroughTheNewEndpoint;
+    fakeCopernic.handleNewfact = function(req) {
+      if (req.originalUrl.match(/somewhere\/else/)) {
+        wentThroughTheNewEndpoint = true;
+      } else {
+        console.log("Still using the old endpoint");
+      }
+      return "12345"
+    }
+    let fmp2copernicJustForThisTest =
+        new Fmp2CopernicGateway({
+        port: 0, // Let the OS pick a port
+        copernicHostPort: fakeCopernic.getHostPort(),
+        copernicBaseURL : "/somewhere/else",
+        attachmentDirectory: tmpdir
+      })
+    return fmp2copernicJustForThisTest.run().then(function() {
+      return rp({uri: uriTest({copernic: fmp2copernicJustForThisTest})})
+    }).then(function(responseBody) {
+        assert(wentThroughTheNewEndpoint);
+    }).then(function() {
+      console.log(fmp2copernicJustForThisTest.listener.address().port)
     })
   })
 
