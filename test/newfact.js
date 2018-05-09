@@ -405,7 +405,7 @@ describe("/copernic/newfact gateway", function() {
         attachmentDirectory: tmpdir
       })
     return fmp2copernicJustForThisTest.run().then(function() {
-      return rp({uri: uriTest({copernic: fmp2copernicJustForThisTest})})
+      return rp({uri: uriTest({fakeCopernic: fmp2copernicJustForThisTest})})
     }).then(function(responseBody) {
         assert(wentThroughTheNewEndpoint);
     }).then(function() {
