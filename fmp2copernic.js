@@ -74,12 +74,7 @@ function Fmp2CopernicGateway(opts) {
             "tel": person.phones.split(',')[0]
           },
           "partners": [],
-          "items": [{
-            "number": queryParams.number,
-            "qty": queryParams.qty,
-            "price": queryParams.price,
-            "text": queryParams.text
-          }],
+          "items": queryParams.items,
 
           "execmode": queryParams.execmode
         }
@@ -149,14 +144,27 @@ function normalize(query) {
 
   // XXX Improve
   normalized.ordernr = query.ordernr;
-  normalized.qty = query.qty;
-  normalized.price = query.price;
   normalized.currency = query.currency;
   normalized.fund = query.fund;
-  normalized.text = query.text;
   normalized.sciper = query.sciper;
-  normalized.number = query.number;
   normalized.execmode = query.execmode;
+
+  normalized.items = [];
+  function maybe_push_item(text, qty, number, price) {
+    if (qty) {
+      normalized.items.push({
+        qty: Number(qty),
+        number,
+        price,
+        text
+      })
+    }
+  }
+
+  maybe_push_item(query.text, query.qty, query.number, query.price)
+  for(let i = 0; (i < 2) || query["qty" + i]; i++) {
+    maybe_push_item(query["text" + i], query["qty" + i], query["number" + i], query["price" + i])
+  }
 
   return normalized;
 }

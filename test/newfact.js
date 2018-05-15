@@ -328,6 +328,21 @@ describe("/copernic/newfact gateway", function() {
       })
   })
 
+  it("transmits multiple items", function() {
+    let itemCount;
+    fakeCopernic.handleNewfact = function(req) {
+      itemCount = req.body.items.length;
+
+      return "12345"
+    }
+    return rp({
+        uri: uriTest() + "&qty1=1&text1=cauliflower&number1=units&price1=130&qty2=4&text2=broccoli&number2=liters&price2=120",
+      })
+      .then(responseBody => {
+        assert.equal(itemCount, 3)
+      })
+  })
+
   it("transmits the execmode", function() {
     var execmodeInMock = null;
     fakeCopernic.handleNewfact = function(req) {
