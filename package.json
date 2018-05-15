@@ -30,7 +30,8 @@
   },
   "devDependencies": {
     "body-parser": "^1.18.2",
-    "mocha": "^4.1.0",
-    "chai": "^4.1.2"
+    "chai": "^4.1.2",
+    "chai-string": "^1.4.0",
+    "mocha": "^4.1.0"
   }
 }
