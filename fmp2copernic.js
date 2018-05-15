@@ -49,6 +49,7 @@ function Fmp2CopernicGateway(opts) {
         resolve()
       })
     }
+
     readFileOrDoNothingPromise.then(function() {
       return epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en')
     }).then(function(p) {
@@ -106,15 +107,11 @@ function Fmp2CopernicGateway(opts) {
           debug(JSON.stringify(response.body));
           res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
         } catch (e) {
-          res.status(500);
-          res.send("ERROR " + e);
-          debug(e);
+          serveError(res, e);
         }
       })
     }).catch(function(e) {
-      res.status(500);
-      res.send("ERROR " + e);
-      debug(e);
+      serveError(res, e);
     })
   })
   return self
@@ -157,4 +154,11 @@ function normalize(query) {
   normalized.execmode = query.execmode;
 
   return normalized;
+}
+
+
+function serveError(res, e) {
+  res.status(500);
+  res.send("ERROR " + e);
+  debug(e);
 }
