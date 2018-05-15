@@ -1,4 +1,6 @@
-let assert = require("assert"),
+let 
+  chai = require("chai"),
+  assert = chai.assert,
   Copernic = require("./mock/copernic.js"),
   Fmp2CopernicGateway = require("../fmp2copernic.js"),
   rp = require('request-promise-native'),
@@ -11,6 +13,8 @@ let assert = require("assert"),
   _ = require("lodash"),
   querystring = require('querystring'),
   debug = require('debug')('newfact');
+
+chai.use(require('chai-string'))  // For assert.startsWith
 
 if (! Promise.prototype.finally) {
   Promise.prototype.finally = function (what) {
@@ -128,6 +132,7 @@ describe("/copernic/newfact gateway", function() {
       simple: false
     }).then(function(r) {
       assert.equal(r.statusCode, 500)
+      assert.startsWith(r.body, "ERROR ")
     })
   })
 
@@ -157,6 +162,7 @@ describe("/copernic/newfact gateway", function() {
       simple: false
     }).then(function(r) {
       assert.equal(r.statusCode, 500)
+      assert.startsWith(r.body, "ERROR ")
     })
   })
 
@@ -167,6 +173,7 @@ describe("/copernic/newfact gateway", function() {
       simple: false
     }).then(function(r) {
       assert.equal(r.statusCode, 500)
+      assert.startsWith(r.body, "ERROR ")
     })
   })
 
@@ -389,6 +396,7 @@ describe("/copernic/newfact gateway", function() {
       simple: false
     }).then(function(r) {
       assert.equal(r.statusCode, 500)
+      assert.startsWith(r.body, "ERROR ")
     })
   })
 
