@@ -74,12 +74,12 @@ function Fmp2CopernicGateway(opts) {
             "tel": person.phones.split(',')[0]
           },
           "partners": [],
-          "items": {
+          "items": [{
             "number": queryParams.number,
             "qty": queryParams.qty,
             "price": queryParams.price,
             "text": queryParams.text
-          },
+          }],
 
           "execmode": queryParams.execmode
         }

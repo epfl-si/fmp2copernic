@@ -259,8 +259,9 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the items count", function() {
     var numberInMock = null;
     fakeCopernic.handleNewfact = function(req) {
-      if (req && req.body && req.body.items && req.body.items.number) {
-        numberInMock = req.body.items.number;
+      if (req && req.body && req.body.items &&
+          req.body.items[0] && req.body.items[0].number) {
+        numberInMock = req.body.items[0].number;
       }
       return "12345"
     }
@@ -276,8 +277,9 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the qty", function() {
     var qtyInMock = null;
     fakeCopernic.handleNewfact = function(req) {
-      if (req && req.body && req.body.items && req.body.items.qty) {
-        qtyInMock = req.body.items.qty;
+      if (req && req.body && req.body.items &&
+          req.body.items[0] && req.body.items[0].qty) {
+        qtyInMock = req.body.items[0].qty;
       }
       return "12345"
     }
@@ -293,8 +295,9 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the price", function() {
     var priceInMock = null;
     fakeCopernic.handleNewfact = function(req) {
-      if (req && req.body && req.body.items && req.body.items.price) {
-        priceInMock = req.body.items.price;
+      if (req && req.body && req.body.items && req.body.items[0] &&
+          req.body.items[0].price) {
+        priceInMock = req.body.items[0].price;
       }
       return "12345"
     }
@@ -310,8 +313,9 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the text", function() {
     var textInMock = null;
     fakeCopernic.handleNewfact = function(req) {
-      if (req && req.body && req.body.items && req.body.items.text) {
-        textInMock = req.body.items.text;
+      if (req && req.body && req.body.items && req.body.items[0] &&
+          req.body.items[0].text) {
+        textInMock = req.body.items[0].text;
       }
       return "12345"
     }
