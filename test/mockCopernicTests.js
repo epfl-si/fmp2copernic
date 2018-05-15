@@ -1,13 +1,14 @@
 let assert = require("assert"),
-  Copernic = require("./mock/copernic.js"),
+  MockCopernic = require("./mock/copernic.js"),
   request = require('request'),
+  rp = require('request-promise-native'),
   debug = require('debug')('mockCopernicTests');
 
 
 describe("tests for MockCopernic", function() {
   let fakeCopernic, fakeCopernicHostPort
   before(function() {
-    fakeCopernic = new Copernic()
+    fakeCopernic = new MockCopernic()
     return fakeCopernic.run().then(function(c) {
       fakeCopernicHostPort = c.getHostPort()
     })
@@ -16,8 +17,6 @@ describe("tests for MockCopernic", function() {
     fakeCopernic.close();
   })
   it("serves a success", function(done) {
-    //start a MockCopernic
-
     fakeCopernic.handleNewfact = function() {
       return "12345"
     }
@@ -35,44 +34,28 @@ describe("tests for MockCopernic", function() {
     });
   })
 
-  // use the npm module request to make a request and check the http code should be 200 and Content-Type should be application/json
 
-
-
-
-
-
-
-
-  it("serves an error", function(done) {
-    var handledNewfact = false;
+  it("serves a Copernic-style application error", function() {
+    let handledNewfact = false;
     fakeCopernic.handleNewfact = function() {
       handledNewfact = true;
-      throw new Error
+      throw new MockCopernic.ClientError("No deal");
     }
-    fakeCopernic.maskingExceptions = true
 
-    request.post('http://' + fakeCopernicHostPort + '/piq/RESTAdapter/api/sd/facture', function(error, response) {
-
-      debug('port:', fakeCopernicHostPort); // Print the port number
-      debug('error:', error); // Print the error if one occurred
-      debug('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-      if (error) {
-        debug("ne panique pas, c'est ce qu'on veut");
-        done(error)
-      } else if ((response.statusCode == 500) && fakeCopernic.caughtException) {
-        done()
-      } else if (!fakeCopernic.caughtException) {
-        if (!handledNewfact) {
-          done(new Error("We didn't even reach handleNewfact"))
-        } else {
-          done(new Error("Uh, I'm not even sure how this went wrong - But it did"))
-        }
-      } else {
-        done(new Error("unexpcted statusCode:" + response.statusCode))
-      }
-
-    });
+    return rp.post({
+      uri: 'http://' + fakeCopernicHostPort + '/piq/RESTAdapter/api/sd/facture',
+      resolveWithFullResponse: true,
+      simple: false
+    }).then(function(response) {
+      assert.equal(true, handledNewfact)
+      assert.equal(200, response.statusCode)
+      let e = JSON.parse(response.body)
+      // The real Copernic actually behaves like this:
+      assert.equal("", e.E_RESULT.item.DOC_NUMBER)
+      assert.equal("X", e.E_RESULT.item.IS_ERROR)
+      assert.equal("E", e.E_RESULT.item.LOG.item.TYPE)
+      assert.equal("No deal", e.E_RESULT.item.LOG.item.MESSAGE)
+    })
   })
 })
 

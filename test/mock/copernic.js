@@ -39,16 +39,26 @@ function MockCopernic() {
           }
         }))
       }).catch(function(e) {
-        if (!self.maskingExceptions) {
+        if (e instanceof MockCopernic.ClientError) {
+          res.set('Content-Type', 'application/json');
+          res.send(JSON.stringify({
+            "E_RESULT": {
+              "item": {
+                "DOC_NUMBER": "",
+                "IS_ERROR": "X",
+                "LOG": {
+                  "item": {
+                    "TYPE": "E",
+                    "MESSAGE": e.message
+                  }
+                }
+              }
+            }
+          }
+          ));
+        } else {
           next(e)
         }
-        // This is basically the same as
-        // next(e);
-        // except without the noise to standard output; plus tests get a chance
-        // to look at the exception.
-        self.caughtException = e;
-        res.status(500);
-        res.send(e + "");
       })
     })
   }
@@ -63,6 +73,11 @@ function MockCopernic() {
 }
 
 module.exports = MockCopernic
+
+/**
+ * @constructor
+ */
+MockCopernic.ClientError = class extends Error {}
 
 MockCopernic.prototype.reset = function() {
   // Reset methods to their prototype, in case a test overrode them
