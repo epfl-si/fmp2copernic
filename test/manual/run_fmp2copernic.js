@@ -6,7 +6,8 @@
 let Fmp2CopernicGateway = require("../../fmp2copernic.js"),
   fmp2CopernicGateway,
   fs = require('fs'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  morgan = require('morgan');
 
 let config = JSON.parse(fs.readFileSync('config.json')),
   secrets = JSON.parse(fs.readFileSync('secrets.json'));
@@ -16,6 +17,8 @@ let copernicGatewayOpts = _.extend({
   protocol: "http"
 }, config, secrets)
 fmp2CopernicGateway = new Fmp2CopernicGateway(copernicGatewayOpts)
+fmp2CopernicGateway.use(morgan('combined'))
+
 return fmp2CopernicGateway.run()
   .then(function() {
     console.log("Fmp2Copernic running on port " +
