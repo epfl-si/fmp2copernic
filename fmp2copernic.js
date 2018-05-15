@@ -102,9 +102,14 @@ function Fmp2CopernicGateway(opts) {
         try {
           if (error) throw error;
           if (response.statusCode !== 200) {
-            throw new Error("Unexpected status code from COPERNIC: " + response.statusCode + " " + response.body);
+            serveError(res, "Unexpected status code from COPERNIC: " + response.statusCode + " " + response.body);
+            return;
           }
           debug(JSON.stringify(response.body));
+          if (response.body.E_RESULT.item.IS_ERROR) {
+            serveError(res, response.body.E_RESULT.item.LOG.item.MESSAGE);
+            return;
+          }
           res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
         } catch (e) {
           serveError(res, e);

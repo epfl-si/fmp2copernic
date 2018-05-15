@@ -428,6 +428,20 @@ describe("/copernic/newfact gateway", function() {
     })
   })
 
+  it("transmits COPERNIC errors", function() {
+    fakeCopernic.handleNewfact = function(req) {
+      throw new Copernic.ClientError("No deal");
+    }
+    return rp({
+      uri: uriTest(),
+      resolveWithFullResponse: true,
+      simple: false
+    }).then(function(r) {
+      assert.equal(r.statusCode, 500)
+      assert.startsWith(r.body, "ERROR No deal")
+    })
+  })
+
   after(function() {
     return underTest.shutdown().then(() => fakeCopernic.shutdown())
   })
