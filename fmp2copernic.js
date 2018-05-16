@@ -93,6 +93,15 @@ function Fmp2CopernicGateway(opts) {
           "filecontent": Buffer.from(fileContent).toString('base64')
         }]
       }
+      if (debug.enabled) {
+        let json = _.cloneDeep(option.json)
+        for (let attachment of json.attachment) {
+          if (attachment.filecontent) {
+            attachment.filecontent = '[...]'
+          }
+        }
+        debug(json)
+      }
       request.post(option, function(error, response) {
         try {
           if (error) throw error;
