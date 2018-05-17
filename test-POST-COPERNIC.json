@@ -8,11 +8,10 @@
 		"changevalidation": false
 	},
 	"shipper": {
-		"name": "Michel Peiris",
-		"sciper": "103007",
-		"fund": "0052-2",
-		"email": "michel.peiris@epfl.ch",
-		"tel": "0216934760"
+		"name": "ATPR",
+		"sciper": 196732,
+		"fund": "520088",
+		"email": "alfred.thomas@epfl.ch"
 	},
 	"shipper_imputation": {
 		"opcode": "",
