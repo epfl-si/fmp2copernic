@@ -9,6 +9,7 @@
 	},
 	"shipper": {
 		"name": "ATPR",
+		"sciper": 196732,
 		"fund": "1017-1",
 		"email": "alfred.thomas@epfl.ch"
 	},
