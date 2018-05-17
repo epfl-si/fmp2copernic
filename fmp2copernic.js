@@ -1,9 +1,10 @@
 /**
  * Main server class
  */
-request = require('request');
 
 const express = require('express'),
+  request = require('request'),
+  rp = require('request-promise-native'),
   path = require('path'),
   _ = require("lodash"),
   decodePath = require('./decodePath.js').decodePath,
@@ -30,7 +31,8 @@ function Fmp2CopernicGateway(opts) {
     copernicBaseURL: "/piq/RESTAdapter/api",
     port: 3000
   }, opts)
-  let backendBaseUrl = self.opts.copernicHostPort
+  let backendBaseUrl = self.opts.protocol + '://' + self.opts.copernicHostPort + self.opts.copernicBaseURL
+
   self.get('/copernic/newfact', function(req, res) {
     debug(req.protocol + '://' + req.get('host') + req.originalUrl)
     let person = null,
@@ -55,7 +57,7 @@ function Fmp2CopernicGateway(opts) {
     }).then(function(p) {
       person = p;
       let queryParams = normalize(req.query);
-      let url = self.opts.protocol + '://' + backendBaseUrl + self.opts.copernicBaseURL + '/sd/facture';
+      let url = backendBaseUrl + '/sd/facture';
       let option = {
         url: url,
         json: {
@@ -123,11 +125,45 @@ function Fmp2CopernicGateway(opts) {
       serveError(res, e);
     })
   })
+
+  function rp_opts(uri) {
+    let option = {uri: backendBaseUrl + uri}
+    if (self.opts.user) {
+      option.auth = {
+        'user': self.opts.user,
+        'pass': self.opts.password
+      }
+    }
+    return option
+  }
+
+
+  self.get('/copernic/facture/:factureNo/statutTexte', function(req, res) {
+    let opts = rp_opts('/sd/facture/' + req.params.factureNo)
+    console.log(opts)
+    rp(opts)
+    .then(function(response) {
+      res.send(JSON.parse(response).status)
+    }).catch(function(e) {
+      serveError(res, e);
+    })
+  })
+
+  self.get('/copernic/facture/:factureNo/statutCode', function(req, res) {
+    let opts = rp_opts('/sd/facture/' + req.params.factureNo)
+    console.log(opts)
+    rp(opts)
+    .then(function(response) {
+      res.send(JSON.parse(response).status_code)
+    }).catch(function(e) {
+      serveError(res, e);
+    })
+  })
+
   return self
 }
 
 module.exports = Fmp2CopernicGateway
-
 
 function normalize(query) {
   let normalized = {};
