@@ -196,13 +196,10 @@ describe("/copernic/newfact gateway", function() {
       sciperInMock = 0,
       infoPers = null;
     fakeCopernic.handleNewfact = function(req) {
+      sciperInMock = parseInt(req.body.shipper.sciper);
       if (req && req.body && req.body.shipper && req.body.shipper.name) {
         nameInMock = req.body.shipper.name;
       }
-      if (req && req.body && req.body.shipper && req.body.shipper.sciper) {
-        sciperInMock = req.body.shipper.sciper;
-      }
-      sciperInMock = parseInt(req.body.shipper.sciper);
     }
     return rp({
         uri: uriTest(),
