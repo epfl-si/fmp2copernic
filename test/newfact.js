@@ -55,8 +55,6 @@ describe("/copernic/newfact gateway", function() {
       price: '3140',
       text: 'Projet : test Copernic',
       execmode: 'SIMU',
-      // PathFacturePDF: 'P:/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/FAC_OF-4-2017.pdf',
-      // PathDevisPDF: '/var/filemaker/documents/ATPR/Travaux/2017/STI-DO/Quatravaux Dominique Hervé Claude/25.09.2017-OF-4/Devis_OF-4-2017.pdf'
     }, params))
   }
 
