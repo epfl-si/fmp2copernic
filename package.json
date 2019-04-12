@@ -21,10 +21,10 @@
   "dependencies": {
     "epfl-people-api": "^1.1.0",
     "express": "^4.16.3",
-    "lodash": "^4.17.10",
-    "morgan": "^1.9.0",
+    "lodash": "^4.17.11",
+    "morgan": "^1.9.1",
     "q": "^1.5.1",
-    "request": "^2.85.0",
+    "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "util.promisify": "^1.0.0"
   },
