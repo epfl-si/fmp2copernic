@@ -1,3 +1,4 @@
+'use strict'
 /**
  * Main server class
  */
@@ -11,7 +12,6 @@ const express = require('express'),
   util = require("util"),
   fs = require('fs'),
   ourExpress = require("./lib/our-express.js"),
-  epflPeopleApi = require('epfl-people-api'),
   readFile = util.promisify(fs.readFile),
   debug = require('debug')('fmp2copernic');
 
@@ -26,6 +26,7 @@ const express = require('express'),
  */
 function Fmp2CopernicGateway(opts) {
   let self = ourExpress.new(Fmp2CopernicGateway)
+  let epflPeopleApi = (opts.inject && opts.inject.epflPeopleApi) || require('epfl-people-api')
   self.opts = _.extend({
     protocol: "http",
     copernicBaseURL: "/piq/RESTAdapter/api",

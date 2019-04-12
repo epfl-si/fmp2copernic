@@ -4,7 +4,7 @@ let
   Copernic = require("./mock/copernic.js"),
   Fmp2CopernicGateway = require("../fmp2copernic.js"),
   rp = require('request-promise-native'),
-  epflPeopleApi = require('epfl-people-api'),
+  epflPeopleApi = require('./mock/epfl-people-api'),
   os = require('os'),
   tmpdir = os.tmpdir(),
   util = require("util"),
@@ -30,7 +30,8 @@ describe("/copernic/newfact gateway", function() {
       underTest = new Fmp2CopernicGateway({
         port: 0, // Let the OS pick a port
         copernicHostPort: fakeCopernic.getHostPort(),
-        attachmentDirectory: tmpdir
+        attachmentDirectory: tmpdir,
+        inject: { epflPeopleApi }
       })
       return underTest.run()
     })
@@ -430,7 +431,8 @@ describe("/copernic/newfact gateway", function() {
         port: 0, // Let the OS pick a port
         copernicHostPort: fakeCopernic.getHostPort(),
         copernicBaseURL : "/somewhere/else",
-        attachmentDirectory: tmpdir
+        attachmentDirectory: tmpdir,
+        inject: { epflPeopleApi }
       })
     return fmp2copernicJustForThisTest.run().then(function() {
       return rp({uri: uriTest({fakeCopernic: fmp2copernicJustForThisTest})
