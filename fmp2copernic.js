@@ -60,112 +60,14 @@ function Fmp2CopernicGateway(opts) {
 
   self.get('/copernic/newfact', async function(req, res) {
     debug(req.protocol + '://' + req.get('host') + req.originalUrl)
-    let person = null,
-      attachmentContents = null,
-      fileContent = null,
-      fileData = null,
-      attachments = []
-
     try {
-      // Load attachments from disk
-      for (let k in req.query) {
-        let matched
-        if (matched = AttachmentNames.match("Path", k)) {
-          let attachmentPath = decodePath(opts.attachmentDirectory,
-                                          req.query[k])
-          let [description, mimeType] = matched
-          attachments.push({
-            "filename": path.basename(attachmentPath),
-            "filetype": mimeType,
-            "filedescription": description,
-            "filecontent": base64(await readFile(attachmentPath))
-          })
-        }
-      }
+      await doNewfact.call(
+        _.extend({}, self.opts, {backendBaseUrl, epflPeopleApi}),
+        req, res)
     } catch (e) {
       serveError(res, e)
-      return
     }
-
-    await epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en')
-    .then(function(p) {
-      person = p;
-      let queryParams = normalize(req.query);
-      let url = backendBaseUrl + '/sd/facture';
-      let option = {
-        url: url,
-        json: {
-          "header": {
-            "ordertype": queryParams.ordertype,
-            "ordernr": queryParams.ordernr,
-            "currency": queryParams.currency,
-            "clientnr": queryParams.clientnr,
-            "fictr": queryParams.fictr
-          },
-          "shipper": {
-            "name": person.firstname + " " + person.name,
-            "sciper": queryParams.sciper,
-            "fund": queryParams.fund,
-            "email": person.email,
-            "tel": person.phones.split(',')[0]
-          },
-          "partners": [],
-          "items": queryParams.items,
-
-          "execmode": queryParams.execmode
-        }
-      }
-      if (self.opts.user) {
-        option.auth = {
-          'user': self.opts.user,
-          'pass': self.opts.password
-        }
-      }
-      if (attachments.length) {
-        option.json.attachment = attachments
-      }
-      if (debug.enabled) {
-        let json = _.cloneDeep(option.json)
-        for (let attachment of json.attachment) {
-          if (attachment.filecontent) {
-            attachment.filecontent = '[...]'
-          }
-        }
-        debug(json)
-      }
-      request.post(option, function(error, response) {
-        try {
-          if (error) throw error;
-          if (response.statusCode !== 200) {
-            serveError(res, "Unexpected status code from COPERNIC: " + response.statusCode + " " + response.body);
-            return;
-          }
-          debug(JSON.stringify(response.body));
-          if (response.body.E_RESULT.item.IS_ERROR) {
-            serveError(res, response.body.E_RESULT.item.LOG.item.MESSAGE);
-            return;
-          }
-          res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
-        } catch (e) {
-          serveError(res, e);
-        }
-      })
-    }).catch(function(e) {
-      serveError(res, e);
-    })
   })
-
-  function rp_opts(uri) {
-    let option = {uri: backendBaseUrl + uri}
-    if (self.opts.user) {
-      option.auth = {
-        'user': self.opts.user,
-        'pass': self.opts.password
-      }
-    }
-    return option
-  }
-
 
   self.get('/copernic/facture/:factureNo/statutTexte', function(req, res) {
     let opts = rp_opts('/sd/facture/' + req.params.factureNo)
@@ -190,6 +92,17 @@ function Fmp2CopernicGateway(opts) {
   })
 
   return self
+
+  function rp_opts(uri) {
+    let option = {uri: backendBaseUrl + uri}
+    if (self.opts.user) {
+      option.auth = {
+        'user': self.opts.user,
+        'pass': self.opts.password
+      }
+    }
+    return option
+  }
 }
 
 module.exports = Fmp2CopernicGateway
@@ -248,4 +161,90 @@ function serveError(res, e) {
   res.status(500);
   res.send("ERROR " + e);
   debug(e);
+}
+
+async function doNewfact (req, res) {
+ let attachmentContents = null,
+     fileContent = null,
+     fileData = null,
+     attachments = []
+
+  // Load attachments from disk
+  for (let k in req.query) {
+    let matched
+    if (matched = AttachmentNames.match("Path", k)) {
+      let attachmentPath = decodePath(this.attachmentDirectory,
+                                      req.query[k])
+      let [description, mimeType] = matched
+      attachments.push({
+        "filename": path.basename(attachmentPath),
+        "filetype": mimeType,
+        "filedescription": description,
+        "filecontent": base64(await readFile(attachmentPath))
+      })
+    }
+  }
+
+  let person = await this.epflPeopleApi.findBySciper(
+    parseInt(req.query.sciper), 'en')
+
+  let queryParams = normalize(req.query)
+  let url = this.backendBaseUrl + '/sd/facture'
+  let option = {
+    url: url,
+    json: {
+      "header": {
+        "ordertype": queryParams.ordertype,
+        "ordernr": queryParams.ordernr,
+        "currency": queryParams.currency,
+        "clientnr": queryParams.clientnr,
+        "fictr": queryParams.fictr
+      },
+      "shipper": {
+        "name": person.firstname + " " + person.name,
+        "sciper": queryParams.sciper,
+        "fund": queryParams.fund,
+        "email": person.email,
+        "tel": person.phones.split(',')[0]
+      },
+      "partners": [],
+      "items": queryParams.items,
+
+      "execmode": queryParams.execmode
+    }
+  }
+  if (this.user) {
+    option.auth = {
+      'user': this.user,
+      'pass': this.password
+    }
+  }
+
+  if (attachments.length) {
+    option.json.attachment = attachments
+  }
+  if (debug.enabled) {
+    let json = _.cloneDeep(option.json)
+    for (let attachment of json.attachment) {
+      if (attachment.filecontent) {
+        attachment.filecontent = '[...]'
+      }
+    }
+    debug(json)
+  }
+
+  let response = await util.promisify(request.post)(option)
+
+  if (response.statusCode !== 200) {
+    serveError(res, "Unexpected status code from COPERNIC: " + response.statusCode + " " + response.body);
+    return;
+  }
+
+  debug(JSON.stringify(response.body));
+  if (response.body.E_RESULT.item.IS_ERROR) {
+    serveError(res, response.body.E_RESULT.item.LOG.item.MESSAGE);
+    return;
+  }
+  
+  res.send("OK " + response.body.E_RESULT.item.DOC_NUMBER);
 }
