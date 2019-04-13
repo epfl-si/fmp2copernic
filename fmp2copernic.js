@@ -15,6 +15,30 @@ const express = require('express'),
   readFile = util.promisify(fs.readFile),
   debug = require('debug')('fmp2copernic');
 
+/**
+ * Helper class to parse attachment names
+ */
+const AttachmentNames = {
+  mimeTypes: {
+    PDF  : "application/pdf",
+    GIF  : "image/gif",
+    PNG  : "image/png",
+    JPG  : "image/jpeg",
+    JPEG : "image/jpeg"
+  },
+  match(prefix, paramName) {
+    let matched
+    for (let k in AttachmentNames.mimeTypes) {
+      if (matched = paramName.match(new RegExp("^" + prefix + "(\\w+)" + k + "$"))) {
+        return [matched[1], AttachmentNames.mimeTypes[k]]
+      }
+    }
+  }
+}
+
+function base64(str) {
+  return Buffer.from(str).toString('base64')
+}
 
 /**
  * @constructor
@@ -34,28 +58,37 @@ function Fmp2CopernicGateway(opts) {
   }, opts)
   let backendBaseUrl = self.opts.protocol + '://' + self.opts.copernicHostPort + self.opts.copernicBaseURL
 
-  self.get('/copernic/newfact', function(req, res) {
+  self.get('/copernic/newfact', async function(req, res) {
     debug(req.protocol + '://' + req.get('host') + req.originalUrl)
     let person = null,
       attachmentContents = null,
       fileContent = null,
       fileData = null,
-      readFileOrDoNothingPromise;
+      attachments = []
 
-    if (req.query.PathDevisPDF) {
-      readFileOrDoNothingPromise = readFile(decodePath(opts.attachmentDirectory, req.query.PathDevisPDF)).then(function(fc) {
-        debug('Read ' + req.query.PathDevisPDF + ' from disk OK, size ' + fc.length + ' bytes')
-        fileContent = fc
-      })
-    } else {
-      readFileOrDoNothingPromise = new Promise((resolve) => {
-        resolve()
-      })
+    try {
+      // Load attachments from disk
+      for (let k in req.query) {
+        let matched
+        if (matched = AttachmentNames.match("Path", k)) {
+          let attachmentPath = decodePath(opts.attachmentDirectory,
+                                          req.query[k])
+          let [description, mimeType] = matched
+          attachments.push({
+            "filename": path.basename(attachmentPath),
+            "filetype": mimeType,
+            "filedescription": description,
+            "filecontent": base64(await readFile(attachmentPath))
+          })
+        }
+      }
+    } catch (e) {
+      serveError(res, e)
+      return
     }
 
-    readFileOrDoNothingPromise.then(function() {
-      return epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en')
-    }).then(function(p) {
+    await epflPeopleApi.findBySciper(parseInt(req.query.sciper), 'en')
+    .then(function(p) {
       person = p;
       let queryParams = normalize(req.query);
       let url = backendBaseUrl + '/sd/facture';
@@ -88,13 +121,8 @@ function Fmp2CopernicGateway(opts) {
           'pass': self.opts.password
         }
       }
-      if (fileContent) {
-        option.json.attachment = [{
-          "filename": path.basename(queryParams.PathDevisPDF),
-          "filetype": "application/pdf",
-          "filesecription": "test attach",
-          "filecontent": Buffer.from(fileContent).toString('base64')
-        }]
+      if (attachments.length) {
+        option.json.attachment = attachments
       }
       if (debug.enabled) {
         let json = _.cloneDeep(option.json)
