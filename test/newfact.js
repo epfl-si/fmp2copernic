@@ -22,6 +22,10 @@ if (! Promise.prototype.finally) {
   }
 }
 
+function base64(string) {
+  return Buffer.from(string).toString('base64')
+}
+
 describe("/copernic/newfact gateway", function() {
   let underTest, fakeCopernic;
   before(function() {
@@ -380,7 +384,6 @@ describe("/copernic/newfact gateway", function() {
   it("transmits the filecontent", function() {
     let attachmentInMock = null;
     let fileContent = "lorem ipsum$";
-    let base64encoded = Buffer.from(fileContent).toString('base64');
     fakeCopernic.handleNewfact = function(req) {
       if (req && req.body && req.body.attachment) {
         attachmentInMock = req.body.attachment;
@@ -398,7 +401,7 @@ describe("/copernic/newfact gateway", function() {
       })
     }).then(responseBody => {
       debug(attachmentInMock);
-      assert.equal(attachmentInMock[0].filecontent, base64encoded)
+      assert.equal(attachmentInMock[0].filecontent, base64(fileContent))
     })
   })
 
@@ -413,6 +416,43 @@ describe("/copernic/newfact gateway", function() {
       assert.equal(r.statusCode, 500)
       assert.startsWith(r.body, "ERROR ")
     })
+  })
+
+  it("accepts and transmits PathAnythingBBQ", async function () {
+    let pdfBytes = '%PDF /notreally'
+    let gifBytes = 'GIF89a'
+    let base64encoded = Buffer.from(pdfBytes).toString('base64')
+    let test1Path = tmpdir + '/test1.pdf',
+        test2Path = tmpdir + '/test2.pdf'  // Not .gif on purpose
+    await fp(test1Path, pdfBytes)
+    await fp(test2Path, gifBytes)
+
+    let attachments
+    fakeCopernic.handleNewfact = function(req) {
+      attachments = req.body.attachment
+      return "12345"
+    }
+
+    let r = await rp({
+      uri: uriTest({
+        PathChouFleurPDF: 'P:/test1.pdf',
+        PathDessertGIF: 'P:/test2.pdf'
+      }),
+      resolveWithFullResponse: true,
+      simple: false
+    })
+    assert.equal(r.statusCode, 200)
+
+    attachments = attachments.sort((a, b) => a.filename < b.filename ? -1 : 1)
+    assert.equal(attachments[0].filename, "test1.pdf")
+    assert.equal(attachments[0].filetype, "application/pdf")
+    assert.equal(attachments[0].filedescription, "ChouFleur")
+    assert.equal(attachments[0].filedescription, "ChouFleur")
+    assert.equal(attachments[0].filecontent, base64(pdfBytes))
+    assert.equal(attachments[1].filename, "test2.pdf")
+    assert.equal(attachments[1].filetype, "image/gif")
+    assert.equal(attachments[1].filedescription, "Dessert")
+    assert.equal(attachments[1].filecontent, base64(gifBytes))
   })
 
   it("can be configured to use another base URL", function() {
