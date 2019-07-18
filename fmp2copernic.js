@@ -225,9 +225,11 @@ async function doNewfact (req, res) {
   }
   if (debug.enabled) {
     let json = _.cloneDeep(option.json)
-    for (let attachment of json.attachment) {
-      if (attachment.filecontent) {
-        attachment.filecontent = '[...]'
+    if (json.attachment) {
+      for (let attachment of json.attachment) {
+        if (attachment.filecontent) {
+          attachment.filecontent = '[...]'
+        }
       }
     }
     debug(json)
