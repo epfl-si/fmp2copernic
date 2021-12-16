@@ -1,0 +1,16 @@
+# After every change to this file do:
+# docker deploy fmp2copernic --compose-file docker-compose.yml
+
+version: '3'
+
+services:
+  server:
+    image: epflsti/fmp2copernic-server
+    ports: ["3000:3000"]
+    volumes:
+      - ./config.json:/usr/src/app/config.json
+      - ./secrets.json:/usr/src/app/secrets.json
+      - /var/filemaker/documents:/var/nas
+    restart: always
+    environment:
+      - DEBUG=*

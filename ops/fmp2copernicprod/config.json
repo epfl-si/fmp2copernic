@@ -1,0 +1,6 @@
+{
+  "protocol": "https",
+  "port": 3000,
+  "attachmentDirectory": "/var/nas/",
+  "copernicBaseURL": "/pip/RESTAdapter/api"
+}
